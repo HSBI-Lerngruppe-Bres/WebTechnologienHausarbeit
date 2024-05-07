@@ -18,7 +18,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
-                    {% if not current_user %}
+                    {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="btn btn-outline-primary" aria-current="page" href="{{url_for("sites.accounts.login")}}">Login / Register</a>
                     </li>
@@ -31,6 +31,18 @@
             </div>
         </div>
     </nav>
+
+    <!-- Displaying flashed messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
     {% block content %}{% endblock %}
 
