@@ -2,6 +2,7 @@ from flask_login import login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from bruno.database.models import User
 from flask import flash
+from bruno.database import db
 
 def authenticate_user(username, password):
     try:
@@ -21,5 +22,16 @@ def register_user(username, password):
     if existing_user:
         flash("Name already taken", 'danger')
         return True
-    User.createNew(username, generate_password_hash(password))
-    return False
+    
+    hashed_password = generate_password_hash(password)
+    new_user = User(username=username, password_hash=hashed_password)
+    db.session.add(new_user)
+    try:
+        db.session.commit()
+        flash(f"Created user: {username}", 'info')
+        login_user(new_user)
+        return True
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error registering user: {e}", 'danger')
+        return False
