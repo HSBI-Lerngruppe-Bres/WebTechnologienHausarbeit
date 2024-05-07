@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 sqlalchemy = "^2.0.29"
 flask = "^3.0.3"
+flask-login = "^0.6.3"
 
 
 [build-system]
