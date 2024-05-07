@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uno-like Card Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .card {
+            width: 100px; /* Adjust size as necessary */
+            height: 140px;
+            border: 1px solid #000;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .card-top, .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        .card-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+        }
+        .card-number {
+            font-weight: bold;
+        }
+        .card-suit {
+            font-size: 20px; /* Larger font size for the suit symbol */
+        }
+        /* Rotate the bottom suit and number to be right side up */
+        .card-bottom {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-body">
+            <div class="card-top">
+                <span class="card-number">5</span>
+	    </div>
+	    <div class="card-">
+                <span class="card-suit">♠</span>
+                <span class="card-suit">♠</span>
+            </div>
+            <div class="card-center">
+                <span class="card-suit">♠</span>
+            </div>
+            <div class="card-bottom">
+                <span class="card-number">5</span>
+                <span class="card-suit">♠</span>
+                <span class="card-suit">♠</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
