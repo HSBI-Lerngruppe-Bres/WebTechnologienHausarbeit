@@ -1,9 +1,10 @@
 import os
 import logging
 from flask import Flask
-#from flask_login import LoginManager
+from flask_login import LoginManager
 from pathlib import Path
 from flask_migrate import Migrate
+from .database.models import User
 
 
 def create_app():
@@ -36,7 +37,7 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
 
-    """# Setup Flask-Login
+    # Setup Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'site.login'
@@ -44,7 +45,7 @@ def create_app():
     @login_manager.user_loader  
     def user_loader(user_id):
         return User.query.get(user_id)
-    """
+    
 
     """with app.app_context():
         db.create_all()
