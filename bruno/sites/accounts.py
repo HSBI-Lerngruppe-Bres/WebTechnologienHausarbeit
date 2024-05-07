@@ -5,6 +5,10 @@ site = Blueprint("accounts", __name__, template_folder="templates/accounts", url
 def login():
     return render_template("login.html")
 
+@site.get("/register")
+def register():
+    return render_template("login.html")
+
 @site.get("/logout")
 def logout():
     return render_template("logout.html")
