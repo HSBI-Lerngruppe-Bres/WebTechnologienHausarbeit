@@ -53,8 +53,8 @@ def create_app():
             logging.info("All tables are empty. Seeding database...")
             seed_database()"""
 
-    #from .sites import site
-    #app.register_blueprint(site)
+    from .sites.base import site as base_site
+    app.register_blueprint(base_site)
 
     # logging.info(app.config)
 
