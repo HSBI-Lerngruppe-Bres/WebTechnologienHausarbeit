@@ -20,13 +20,13 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
-                    {% if not current_user.is_authenticated %}
+                    {% if not current_user %}
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary" aria-current="page" href="/login">Login</a>
+                        <a class="btn btn-outline-primary" aria-current="page" href="{{url_for("sites.accounts.login")}}">Login</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-outline-danger" aria-current="page" href="/logout">Logout</a>
+                        <a class="btn btn-outline-danger" aria-current="page" href="{{url_for("sites.accounts.logout")}}">Logout</a>
                     </li>
                     {% endif %}
                 </ul>
