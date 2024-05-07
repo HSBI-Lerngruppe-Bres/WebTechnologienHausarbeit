@@ -3,6 +3,7 @@ import logging
 from flask import Flask
 #from flask_login import LoginManager
 from pathlib import Path
+from flask_migrate import Migrate
 
 
 def create_app():
@@ -30,22 +31,23 @@ def create_app():
         #TODO Maybe split into multiple functions and files
 
 
-    """from .database import db
+    logging.debug(f"Initialize database")
+    from .database import db
     db.init_app(app)
+    Migrate(app, db)
 
-    # Setup Flask-Login
+    """# Setup Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'site.login'
 
-    @login_manager.user_loader
+    @login_manager.user_loader  
     def user_loader(user_id):
         return User.query.get(user_id)
+    """
 
-    with app.app_context():
+    """with app.app_context():
         db.create_all()
-
-        # Check if every Table is empty
         NEW_DB = all(db.session.query(table).first()
                      is None for table in db.metadata.sorted_tables)
 
