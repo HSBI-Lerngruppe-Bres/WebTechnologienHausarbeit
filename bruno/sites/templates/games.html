@@ -1,19 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center pt-3">
+<div class="row justify-content-center pt-3 g-3">
     <div class="col-sm-8 col-lg-4 col-xl-3">
         <div class="card">
             <div class="card-body">
                 <h3 class="card-title">Create a Game</h3>
-                <form >
+                <form>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">a</span>
+                        <div class="form-floating flex-grow-1">
+                            <input type="text" class="form-control" id="game_name" name="game_name" value="{{ current_user.username }}'s Game" required>
+                            <label for="game_name">Name</label>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                            <div class="form-floating flex-grow-1">
+                                <input type="password" class="form-control" id="game_password" name="game_password" placeholder="Password" required>
+                                <label for="game_password">Password</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div> 
         </div> 
     </div> 
     <div class="col-12 col-sm-8 col-lg-4 col-xl-4">
         <div class="card">
             <div class="card-body">
-                <h3 class="card-title">Login</h3>
+                <h3 class="card-title">Active Games</h3>
                 {% if games|length > 0 %}
                 <table class="table table-hover">
                     <thead>

@@ -10,7 +10,7 @@ class User(db.Model, UserMixin):
     owned_games = db.relationship('Game', backref='owner', lazy=True)
 
     def __repr__(self):
-        return f'User{self.username}'
+        return f'User(name={self.username})'
 
     def get_id(self):
         return self.id
