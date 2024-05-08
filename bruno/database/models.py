@@ -36,6 +36,7 @@ class Game(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     players = db.relationship('User', secondary=players_games, backref=db.backref('games', lazy='dynamic'))
     protection = db.Column(db.Integer, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
 
     def __repr__(self):
-        return f'Game(title={self.title})'
+        return f'Game(id={self.id}, title={self.title})'
