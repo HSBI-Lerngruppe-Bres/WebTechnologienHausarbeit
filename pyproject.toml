@@ -6,7 +6,7 @@ authors = ["Nils Baxheinrich <nils.baxheinrich@gmx.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 sqlalchemy = "^2.0.29"
 flask = "^3.0.3"
 flask-login = "^0.6.3"
