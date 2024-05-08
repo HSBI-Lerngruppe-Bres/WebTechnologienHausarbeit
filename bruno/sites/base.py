@@ -15,4 +15,5 @@ def index():
 def games():
     games = get_active_games()
     print(games)
+    #TODO wtforms
     return render_template("games.html", games=games)
