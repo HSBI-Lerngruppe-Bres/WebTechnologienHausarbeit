@@ -17,6 +17,7 @@ def login_post():
     if not authenticate_user(username, password):       
         return render_template("login.html")
     return redirect(url_for('sites.index'))
+    #TODO redirect to redirect URL
 
 @site.get("/register")
 def register():

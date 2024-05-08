@@ -20,7 +20,6 @@ def create_app():
     if CONFIG_PATH.is_file():
         app.config.from_pyfile(str(CONFIG_PATH))
         logging.info(f"Loaded config from: {CONFIG_PATH}")
-
     else:
         logging.warning(
             f"Configuration file not found at {CONFIG_PATH}")   
@@ -40,25 +39,14 @@ def create_app():
     # Setup Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'site.login'
+    login_manager.login_view = 'sites.accounts.login'
 
     @login_manager.user_loader  
     def user_loader(user_id):
         return User.query.get(user_id)
-    
-
-    """with app.app_context():
-        db.create_all()
-        NEW_DB = all(db.session.query(table).first()
-                     is None for table in db.metadata.sorted_tables)
-
-        if NEW_DB:
-            logging.info("All tables are empty. Seeding database...")
-            seed_database()"""
 
     from .sites.base import site as base_site
     app.register_blueprint(base_site)
 
-    # logging.info(app.config)
-
+    #TODO Logging stuff
     return app
