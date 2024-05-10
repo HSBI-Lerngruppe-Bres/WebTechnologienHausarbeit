@@ -15,6 +15,7 @@ def get_active_games() -> List[Game]:
     """
     active_games = db.session.query(
         Game.name,
+        Game.id,
         Game.password_hash,
         func.count(players_games.c.user_id).label('player_count')
     ).where(
