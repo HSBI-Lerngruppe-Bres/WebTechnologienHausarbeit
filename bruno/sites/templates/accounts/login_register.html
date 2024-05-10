@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Bruno - Login & Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center pt-3 g-3">
+    <!-- Login Form -->
+    <div class="col-12 col-sm-8 col-lg-4 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Login</h3>
+                <form method="post">
+                    {{ login_form.hidden_tag() }}
+                    
+                    <!-- Username Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ login_form.username(class="form-control", id="username", placeholder="Username") }}
+                            <label for="username">{{ login_form.username.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ login_form.password(class="form-control", id="password", placeholder="Password") }}
+                            <label for="password">{{ login_form.password.label.text }}</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" name="login_submit">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Registration Form -->
+    <div class="col-12 col-sm-8 col-lg-4 col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Register</h3>
+                <form action="{{ url_for('sites.accounts.login_register') }}" method="post">
+                    {{ register_form.hidden_tag() }}
+
+                    <!-- Username Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ register_form.username(class="form-control", id="username", placeholder="Username") }}
+                            <label for="username">{{ register_form.username.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-envelope-at"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ register_form.email(class="form-control", id="email", placeholder="Email") }}
+                            <label for="email">{{ register_form.email.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ register_form.password(class="form-control", id="password", placeholder="Password") }}
+                            <label for="password">{{ register_form.password.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ register_form.confirm_password(class="form-control", id="confirm_password", placeholder="Confirm Password") }}
+                            <label for="confirm_password">{{ register_form.confirm_password.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" name="register_submit">Register</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
