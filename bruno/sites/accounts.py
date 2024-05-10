@@ -18,7 +18,7 @@ def login_register():
     """
     # TODO redirect if already logged in
     login_form = LoginForm(prefix='login')
-    register_form = RegisterForm(prefix='register')
+    register_form = RegisterForm(paccountsrefix='register')
     user = None
     if 'login_submit' in request.form and login_form.validate_on_submit():
         user = authenticate_user(

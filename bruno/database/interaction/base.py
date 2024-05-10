@@ -4,28 +4,38 @@ from sqlalchemy import func
 from typing import List, Optional
 from ..models import User
 from werkzeug.security import generate_password_hash
-from flask import flash
+from flask import flash, current_app
+from hashids import Hashids
 
 
-def get_active_games() -> List[Game]:
-    """Returns all active games
+def get_active_games() -> List[dict]:
+    """Returns all active games with encoded IDs
 
     Returns:
-        List[Game]: The list of active games
+        List[dict]: The list of active games with encoded IDs
     """
-    active_games = db.session.query(
+    active_games_query = db.session.query(
         Game.name,
         Game.id,
         Game.password_hash,
         func.count(players_games.c.user_id).label('player_count')
-    ).where(
+    ).filter(
         Game.public == 0
     ).outerjoin(
         players_games, players_games.c.game_id == Game.id
     ).group_by(
         Game.id
     ).all()
-    db.session.commit()
+
+    hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
+    active_games = [
+        {
+            'name': game.name,
+            'hashed_game_id': hashids.encode(game.id),
+            'player_count': game.player_count,
+            'password_hash': game.password_hash
+        } for game in active_games_query
+    ]
     return active_games
 
 
