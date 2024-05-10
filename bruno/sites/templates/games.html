@@ -6,20 +6,37 @@
         <div class="card">
             <div class="card-body">
                 <h3 class="card-title">Create a Game</h3>
-                <form method="post">
+                <form action="{{ url_for('sites.games') }}" method="post">
                     {{ create_game_form.hidden_tag() }}
-                    <p>
-                        {{ create_game_form.game_name.label }}<br>
-                        {{ create_game_form.game_name(size=20) }}
-                    </p>
-                    <p>
-                        {{ create_game_form.public.label }} {{ create_game_form.public() }}<br>
-                    </p>
-                    <p>
-                        {{ create_game_form.password.label }}<br>
-                        {{ create_game_form.password(size=20) }}
-                    </p>
-                    <p>{{ create_game_form.submit() }}</p>
+
+                    <!-- Game Name Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ create_game_form.game_name(class="form-control", id="game_name", placeholder=create_game_form.game_name.label.text) }}
+                            <label for="game_name">{{ create_game_form.game_name.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Public Toggle Switch -->
+                    <div class="form-check form-switch mb-3">
+                        {{ create_game_form.public(class="form-check-input", id="public") }}
+                        <label class="form-check-label" for="public">{{ create_game_form.public.label.text }}</label>
+                    </div>
+
+                    <!-- Password Field (only shown if needed) -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ create_game_form.password(class="form-control", id="password", placeholder=create_game_form.password.label.text) }}
+                            <label for="password">{{ create_game_form.password.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="titled-grid gap-2">
+                        {{ create_game_form.submit(class="btn btn-primary") }}
+                    </div>
                 </form>
             </div> 
         </div> 
@@ -35,7 +52,6 @@
                             <th scope="col" class="col-md-7">Name</th>
                             <th scope="col" class="col-md-2">Players</th>
                             <th scope="col" class="col-md-1">Status</th>
-                            <th scope="col" class="col-md-2"></th>
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
@@ -44,12 +60,13 @@
                             <td>{{ game.name }}</td>
                             <td>{{ game.player_count }}</td>
                             <td>
-                                {% if game.protection == 0 %}
-                                    <i class="bi bi-lock"></i></td><td>Private</td>
-                                {% elif game.protection == 1 %}
-                                    <i class="bi bi-unlock"></i></td><td>Public</td>
-                                {% elif game.protection == 2 %}
-                                    <i class="bi bi-key"></i> </td><td>Password</td>
+                                {% if game.public == 0 %}
+                                    <i class="bi bi-lock"></i>
+                                {% else %}
+                                    <i class="bi bi-unlock"></i>
+                                {% endif %}
+                                {% if game.password == 0 %}
+                                    <i class="bi bi-key"></i>
                                 {% endif %}
                             </td>
                         </tr>
