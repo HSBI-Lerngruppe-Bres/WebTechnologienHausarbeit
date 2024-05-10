@@ -16,6 +16,9 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
     Returns:
         Optional(User): The user object from the database
     """
+    if not username or not password:
+        return None
+
     try:
         user: User = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
@@ -39,6 +42,9 @@ def register_user(username: str, password: str, password_confirmed: str, email: 
     Returns:
         Optional[User]: The user object from the database
     """
+    if not username or not password or not password_confirmed or not email:
+        return None
+
     # TODO implement password confirm
     # TODO implement Email
     existing_user = User.query.filter_by(username=username).first()

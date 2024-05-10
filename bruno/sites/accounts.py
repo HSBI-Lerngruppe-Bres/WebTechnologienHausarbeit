@@ -21,11 +21,11 @@ def login_register():
     register_form = RegisterForm(prefix='register')
     user = None
     if 'login_submit' in request.form and login_form.validate_on_submit():
-        user = authenticate_user(request.form.get("Username"),
-                                 request.form.get("Password"))
+        user = authenticate_user(
+            login_form.username.data, login_form.password.data)
     elif 'register_submit' in request.form and register_form.validate_on_submit():
-        user = register_user(request.form.get("Username"), request.form.get(
-            "Password"), request.form.get("Confirm Password"), request.form.get("Email"))
+        user = register_user(register_form.username.data,
+                             register_form.password.data, register_form.email.data)
 
     if user:
         login_user(user)
