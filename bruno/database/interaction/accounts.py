@@ -30,22 +30,20 @@ def authenticate_user(username: str, password: str) -> Optional[User]:
         return None
 
 
-def register_user(username: str, password: str, password_confirmed: str, email: str) -> Optional[User]:
+def register_user(username: str, password: str, email: str) -> Optional[User]:
     """Adds a new user to the database
 
     Args:
         username (str): The username from the form
         password (str): The password from the form
-        password_confirmed (str): The password confirmation from the form
         email (str): The email from the form
 
     Returns:
         Optional[User]: The user object from the database
     """
-    if not username or not password or not password_confirmed or not email:
+    if not username or not password or not email:
         return None
 
-    # TODO implement password confirm
     # TODO implement Email
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
