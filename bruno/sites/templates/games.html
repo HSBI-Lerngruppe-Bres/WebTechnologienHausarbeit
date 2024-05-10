@@ -44,9 +44,21 @@
             <div class="card-body">
                 <h3 class="card-title">Join a Private Game</h3>
                 <form action="{{ url_for('sites.games') }}" method="post">
-                    {{ create_game_form.hidden_tag() }}
+                    {{ join_game_form.hidden_tag() }}
+            
+                    <!-- Game Code Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ join_game_form.hashed_game_id(class="form-control", id="hashed_game_id", placeholder=join_game_form.hashed_game_id.label.text) }}
+                            <label for="hashed_game_id">{{ join_game_form.hashed_game_id.label.text }}</label>
+                        </div>
+                    </div>
 
-                    <!--TODO Join Game Form -->
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        {{ join_game_form.submit(class="btn btn-primary") }}
+                    </div>
                 </form>
             </div> 
         </div>

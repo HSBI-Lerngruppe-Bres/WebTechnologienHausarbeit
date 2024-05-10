@@ -12,6 +12,7 @@ def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)
     # TODO redirect or password requesr
+    # TODO redirect if no game
     # Logic to add the current user to the game's players
     # Redirect to the game page or display some confirmation message
     return redirect(url_for('sites.game.lobby', hashed_game_id=hashed_game_id))
