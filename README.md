@@ -1,5 +1,7 @@
 # Web Technologies Project
 
+![Project Logo](bruno/static/images/logo.png)
+
 ## Introduction
 
 This project is a web application developed using Flask and SQLAlchemy in Python. The goal of this project is to create an intuitive and user-friendly platform that [insert specific functions or problems your app solves].
