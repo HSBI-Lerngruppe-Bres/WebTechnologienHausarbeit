@@ -40,6 +40,16 @@
                 </form>
             </div> 
         </div> 
+         <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Join a Game</h3>
+                <form action="{{ url_for('sites.games') }}" method="post">
+                    {{ create_game_form.hidden_tag() }}
+
+                    <!--TODO Join Game Form -->
+                </form>
+            </div> 
+        </div>
     </div> 
     <div class="col-12 col-sm-10 col-lg-6 col-xl-6">
         <div class="card">
