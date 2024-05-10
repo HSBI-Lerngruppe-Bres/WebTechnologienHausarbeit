@@ -4,6 +4,8 @@ from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, E
 
 
 class LoginForm(FlaskForm):
+    """The login form
+    """
     username = StringField('Username', validators=[
                            DataRequired(), Length(min=4, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -11,6 +13,8 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    """The register form
+    """
     username = StringField('Username', validators=[
                            DataRequired(), Length(min=4, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email(
