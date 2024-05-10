@@ -4,6 +4,7 @@ from sqlalchemy import func
 from typing import List, Optional
 from ..models import User
 from werkzeug.security import generate_password_hash
+from flask import flash
 
 
 def get_active_games() -> List[Game]:
@@ -14,14 +15,17 @@ def get_active_games() -> List[Game]:
     """
     active_games = db.session.query(
         Game.name,
-        Game.protection,
+        Game.password_hash,
         func.count(players_games.c.user_id).label('player_count')
-    ).join(
+    ).where(
+        Game.public == 0
+    ).outerjoin(
         players_games, players_games.c.game_id == Game.id
     ).group_by(
         Game.id
     ).all()
-
+    db.session.commit()
+    print(active_games)
     return active_games
 
 
@@ -41,7 +45,7 @@ def create_games(game_name: str, public: bool, password: str, owner: User) -> Op
         new_game = Game(
             name=game_name,
             owner_id=owner.id,
-            protection=0 if public else 1,
+            public=0 if public else 1,
             password_hash=generate_password_hash(
                 password) if password else None
         )

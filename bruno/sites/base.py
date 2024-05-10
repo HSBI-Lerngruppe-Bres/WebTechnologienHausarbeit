@@ -20,8 +20,9 @@ def games():
     games = get_active_games()
     create_game_form = CreateGameForm()
     if create_game_form.validate_on_submit():
-        create_games(create_game_form.game_name.data,
-                     create_game_form.public.data,
-                     create_game_form.password.data,
-                     current_user)
+        print(create_games(create_game_form.game_name.data,
+                           create_game_form.public.data,
+                           create_game_form.password.data,
+                           current_user))
+
     return render_template("games.html", games=games, create_game_form=create_game_form)
