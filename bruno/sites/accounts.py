@@ -25,8 +25,8 @@ def login_register():
                                  request.form.get("Password"))
     elif 'register_submit' in request.form and register_form.validate_on_submit():
         user = register_user(request.form.get("Username"), request.form.get(
-            "Password"), request.form.get("Email"), request.form.get("Confirm Password"))
-        
+            "Password"), request.form.get("Confirm Password"), request.form.get("Email"))
+
     if user:
         login_user(user)
         return redirect(url_for('sites.index'))

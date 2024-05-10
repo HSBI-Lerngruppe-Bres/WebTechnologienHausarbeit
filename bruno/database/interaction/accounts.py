@@ -6,7 +6,7 @@ from bruno.database import db
 from typing import Optional
 
 
-def authenticate_user(username: str, password: str) -> Optional < User >:
+def authenticate_user(username: str, password: str) -> Optional[User]:
     """Validates the credentials of a user by its username and password
 
     Args:
@@ -27,13 +27,24 @@ def authenticate_user(username: str, password: str) -> Optional < User >:
         return None
 
 
-def register_user(username: str, password: str, password_confirmed: str, email: str):
+def register_user(username: str, password: str, password_confirmed: str, email: str) -> Optional[User]:
+    """Adds a new user to the database
+
+    Args:
+        username (str): The username from the form
+        password (str): The password from the form
+        password_confirmed (str): The password confirmation from the form
+        email (str): The email from the form
+
+    Returns:
+        Optional[User]: The user object from the database
+    """
     # TODO implement password confirm
     # TODO implement Email
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         flash("Name already taken", 'danger')
-        return True
+        return None
 
     hashed_password = generate_password_hash(password)
     new_user = User(username=username, password_hash=hashed_password)
@@ -41,9 +52,8 @@ def register_user(username: str, password: str, password_confirmed: str, email: 
     try:
         db.session.commit()
         flash(f"Created user: {username}", 'info')
-        login_user(new_user)
-        return True
+        return new_user
     except Exception as e:
         db.session.rollback()
         flash(f"Error registering user: {e}", 'danger')
-        return False
+        return None
