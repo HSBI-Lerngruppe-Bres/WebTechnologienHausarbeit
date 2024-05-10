@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center pt- g-3">
+<div class="row justify-content-center pt-3 g-3">
     <div class="col-12 col-sm-10 col-lg-4 col-xl-3">
         <div class="card">
             <div class="card-body">
@@ -14,7 +14,6 @@
                     </p>
                     <p>
                         {{ create_game_form.public.label }} {{ create_game_form.public() }}<br>
-                        {{ create_game_form.private.label }} {{ create_game_form.private() }}
                     </p>
                     <p>
                         {{ create_game_form.password.label }}<br>
