@@ -8,5 +8,10 @@ class CreateGameForm(FlaskForm):
     public = BooleanField('Public')
     password = PasswordField('Password', validators=[
                              Optional()])
-
     submit = SubmitField('Create Game')
+
+    def __init__(self, *args, **kwargs):
+        super(CreateGameForm, self).__init__(*args, **kwargs)
+        if not self.game_name.data:
+            self.game_name.data = f"{kwargs.get(
+                'username', '')}'s Game"

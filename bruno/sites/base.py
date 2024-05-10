@@ -18,13 +18,14 @@ def index():
 @login_required
 def games():
     games = get_active_games()
-    create_game_form = CreateGameForm()
+    create_game_form = CreateGameForm(username=current_user.username)
     if create_game_form.validate_on_submit():
         game = create_games(create_game_form.game_name.data,
                             create_game_form.public.data,
                             create_game_form.password.data,
                             current_user)
         return redirect(url_for('sites.join_game', game_id=game.id))
+
     return render_template("games.html", games=games, create_game_form=create_game_form)
 
 
