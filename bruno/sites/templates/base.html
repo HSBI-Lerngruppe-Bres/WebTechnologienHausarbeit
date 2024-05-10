@@ -20,7 +20,7 @@
                 <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
                     {% if not current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary" aria-current="page" href="{{url_for("sites.accounts.login")}}">Login / Register</a>
+                        <a class="btn btn-outline-primary" aria-current="page" href="{{url_for("sites.accounts.login_register")}}">Login / Register</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
