@@ -2,6 +2,7 @@ from bruno.database.models import Game, players_games
 from bruno.database import db
 from sqlalchemy import func
 
+
 def get_active_games():
     active_games = db.session.query(
         Game.title,
@@ -12,5 +13,5 @@ def get_active_games():
     ).group_by(
         Game.id
     ).all()
-    
+
     return active_games
