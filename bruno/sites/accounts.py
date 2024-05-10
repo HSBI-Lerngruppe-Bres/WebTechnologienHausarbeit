@@ -3,7 +3,6 @@ from bruno.database.interaction.accounts import authenticate_user, register_user
 from flask_login import logout_user, login_user
 from bruno.forms.accounts import LoginForm, RegisterForm
 
-
 site = Blueprint("accounts", __name__,
                  template_folder="templates/accounts", url_prefix="/accounts")
 
@@ -16,7 +15,7 @@ def login_register():
     Returns:
         HTTPResponse: Either the side the user wants to be redirected to or the login and register form
     """
-    # TODO redirect if already logged in
+    # TODO redirect after logged in
     login_form = LoginForm(prefix='login')
     register_form = RegisterForm(prefix='register')
     user = None
@@ -29,7 +28,10 @@ def login_register():
 
     if user:
         login_user(user)
-        return redirect(url_for('sites.index'))
+
+        next = request.args.get('next')
+        # TODO possible security risk
+        return redirect(next or url_for('sites.index'))
     return render_template('login_register.html', login_form=login_form, register_form=register_form)
 
 
