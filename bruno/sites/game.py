@@ -24,4 +24,4 @@ def lobby(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)
     # Logic to add the current user to the game's players
     # Redirect to the game page or display some confirmation message
-    return render_template("game_lobby.html")
+    return render_template("lobby.html")
