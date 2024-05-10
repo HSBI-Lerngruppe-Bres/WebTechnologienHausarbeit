@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center pt-3 g-3">
+    <div class="col-12 col-sm-10 col-lg-4 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Create a Game</h3>
+                <form action="{{ url_for('sites.games') }}" method="post">
+                    {{ create_game_form.hidden_tag() }}
+
+                    <!-- Game Name Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-controller"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ create_game_form.game_name(class="form-control", id="game_name", placeholder=create_game_form.game_name.label.text) }}
+                            <label for="game_name">{{ create_game_form.game_name.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Public Toggle Switch -->
+                    <div class="form-check form-switch mb-3">
+                        {{ create_game_form.public(class="form-check-input", id="public") }}
+                        <label class="form-check-label" for="public">{{ create_game_form.public.label.text }}</label>
+                    </div>
+
+                    <!-- Password Field (only shown if needed) -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ create_game_form.password(class="form-control", id="password", placeholder=create_game_form.password.label.text) }}
+                            <label for="password">{{ create_game_form.password.label.text }}</label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="titled-grid gap-2">
+                        {{ create_game_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div> 
+        </div> 
+    </div> 
+    <div class="col-12 col-sm-10 col-lg-6 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">All Games</h3>
+                {% if games|length > 0 %}
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-9">Name</th>
+                                <th scope="col" class="col-2">Players</th>
+                                <th scope="col" class="col-1">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            {% for game in games %}
+                                <tr onclick="window.location.href = '{{ url_for('sites.join_game', game_id=game.id) }}';" style="cursor: pointer;">
+                                    <td>{{ game.name }}</td>
+                                    <td>{{ game.player_count }}</td>
+                                    <td>
+                                        {% if not game.password_hash %}
+                                            <i class="bi bi-unlock"></i>
+                                        {% else %}
+                                            <i class="bi bi-key"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                {% else %}
+                    <div class="pb-2">
+                        Its pretty quite down here 
+                    </div>
+                {% endif %}
+            </div> 
+        </div> 
+    </div> 
+</div>
+{% endblock %}

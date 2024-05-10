@@ -27,7 +27,6 @@ def login_register():
         user = register_user(register_form.username.data,
                              register_form.password.data, register_form.email.data)
 
-    print(user)
     if user:
         login_user(user)
         return redirect(url_for('sites.index'))
