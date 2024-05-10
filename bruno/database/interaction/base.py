@@ -25,7 +25,6 @@ def get_active_games() -> List[Game]:
         Game.id
     ).all()
     db.session.commit()
-    print(active_games)
     return active_games
 
 

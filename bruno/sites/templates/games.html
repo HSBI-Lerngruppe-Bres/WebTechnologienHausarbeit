@@ -46,30 +46,31 @@
             <div class="card-body">
                 <h3 class="card-title">All Games</h3>
                 {% if games|length > 0 %}
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col-md-7">Name</th>
-                            <th scope="col" class="col-md-2">Players</th>
-                            <th scope="col" class="col-md-1">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        {% for game in games %}
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
-                                <td>{{ game.name }}</td>
-                                <td>{{ game.player_count }}</td>
-                                <td>
-                                    {% if game.password %}
-                                        <i class="bi bi-key"></i>
-                                    {% else %}
-                                        <i class="bi bi-unlock"></i>
-                                    {% endif %}
-                                </td>
+                                <th scope="col" class="col-9">Name</th>
+                                <th scope="col" class="col-2">Players</th>
+                                <th scope="col" class="col-1">Status</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            {% for game in games %}
+                                <tr>    
+                                    <td>{{ game.name }}</td>
+                                    <td>{{ game.player_count }}</td>
+                                    <td>
+                                        {% if game.public %}
+                                            <i class="bi bi-unlock"></i>
+                                        {% else %}
+                                            <i class="bi bi-key"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
                 {% else %}
                     <div class="pb-2">
                         Its pretty quite down here 
