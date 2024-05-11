@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, render_template, current_app
 from flask_login import login_required
 from hashids import Hashids
-from bruno.forms.game import GameSettingsForm
+
 site = Blueprint("game", __name__,
                  template_folder="templates/game", url_prefix="/game")
 

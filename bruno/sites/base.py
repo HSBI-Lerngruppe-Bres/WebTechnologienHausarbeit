@@ -5,11 +5,14 @@ from flask_login.utils import login_required, current_user
 from bruno.database.interaction.base import get_active_games, create_games
 from bruno.forms.base import CreateGameForm, JoinGameForm
 from hashids import Hashids
+from bruno.api import api
 
 site = Blueprint("sites", __name__,
                  template_folder="templates", url_prefix="/")
+
 site.register_blueprint(accounts_site)
 site.register_blueprint(game_site)
+site.register_blueprint(api)
 
 
 @site.get("/")
