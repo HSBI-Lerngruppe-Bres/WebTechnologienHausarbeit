@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, render_template, current_app
 from flask_login import login_required
 from hashids import Hashids
-
+from bruno.forms.game import GameSettingsForm
 site = Blueprint("game", __name__,
                  template_folder="templates/game", url_prefix="/game")
 
@@ -25,4 +25,4 @@ def lobby(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)
     # Logic to add the current user to the game's players
     # Redirect to the game page or display some confirmation message
-    return render_template("lobby.html")
+    return render_template("lobby.html", hashed_game_id=hashed_game_id)
