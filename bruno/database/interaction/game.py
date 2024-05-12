@@ -1,8 +1,8 @@
 from typing import List
-from ..models import Game, User, db
+from ..models import Game, Player, db
 
 
-def get_players_by_game_id(game_id: int) -> List[User]:
+def get_players_by_game_id(game_id: int) -> List[Player]:
     """
     Retrieve all players participating in a specific game by the game ID.
 
@@ -10,7 +10,7 @@ def get_players_by_game_id(game_id: int) -> List[User]:
         game_id (int): The ID of the game to retrieve players from.
 
     Returns:
-        List[User]: A list of User objects that are players in the specified game.
+        List[Player]: A list of Player objects that are players in the specified game.
     """
     game = Game.query.get(game_id)
     if game:
@@ -31,7 +31,7 @@ def player_join_game(player_id: int, game_id: int) -> bool:
     """
     try:
         game = Game.query.get(game_id)
-        player = User.query.get(player_id)
+        player = Player.query.get(player_id)
         if not game or not player:
             print("Game or player not found.")
             return False

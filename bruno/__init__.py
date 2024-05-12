@@ -4,7 +4,7 @@ from flask import Flask
 from flask_login import LoginManager
 from pathlib import Path
 from flask_migrate import Migrate
-from .database.models import User
+from .database.models import Player
 
 
 def create_app():
@@ -38,11 +38,11 @@ def create_app():
     # Setup Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'sites.accounts.login_register'
+    login_manager.login_view = 'sites.choose_name'
 
     @login_manager.user_loader
-    def user_loader(user_id):
-        return User.query.get(user_id)
+    def user_loader(player_id):
+        return Player.query.get(player_id)
 
     from .sites.base import site as base_site
     app.register_blueprint(base_site)

@@ -9,7 +9,7 @@
                     <h3 class="card-title">Player List</h3>
                     <ul class="list-group" id="players">
                         {% for player in players %}
-                            <li class="list-group-item">{{ player.username }}</li>
+                            <li class="list-group-item">{{ player.name }}</li>
                         {% else %}
                             No players yet.
                         {% endfor %}
@@ -56,7 +56,7 @@
                 const $list = $('#players');
                 $list.empty();
                 players.forEach(function(player) {
-                    $list.append(`<li class="list-group-item">${player.username}</li>`);
+                    $list.append(`<li class="list-group-item">${player.name}</li>`);
                 });
                 if (players.length < 1){
                     $list.append("No players yet.");

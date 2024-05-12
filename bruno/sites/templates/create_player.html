@@ -10,14 +10,14 @@
             <div class="card-body">
                 <h3 class="card-title">Choose your Name</h3>
                 <form method="post">
-                    {{ login_form.hidden_tag() }}
+                    {{ create_player_form.hidden_tag() }}
                     
-                    <!-- Username Field -->
+                    <!-- Player Name Field -->
                     <div class="input-group mb-3">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                         <div class="form-floating flex-grow-1">
-                            {{ login_form.username(class="form-control", id="username", placeholder="Player Name") }}
-                            <label for="username">{{ login_form.username.label.text }}</label>
+                            {{ create_player_form.name(class="form-control", id="name", placeholder="Player Name") }}
+                            <label for="name">{{ create_player_form.name.label.text }}</label>
                         </div>
                     </div>
                     
