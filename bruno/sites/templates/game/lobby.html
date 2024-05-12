@@ -79,6 +79,16 @@
         }
 
         window.addEventListener('beforeunload', function(event) {
+            /**
+            * Handles the event before the browser window is unloaded.
+            * This event listener is triggered when the user attempts to close the tab, refresh the page, or navigate away.
+            * It sends a synchronous POST request to the server, informing it that the user is attempting to leave the lobby.
+            * The use of a synchronous request ensures that the message is sent before the page unloads, although it may
+            * negatively impact user experience by briefly freezing the UI. The request includes a JSON payload with a
+            * message indicating the tab is closing.
+            *
+            * @param {Event} event - The event object provided by the 'beforeunload' event.
+            */
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '/api/v1/lobby/leave', false);
             xhr.setRequestHeader('Content-Type', 'application/json');
@@ -103,7 +113,6 @@
         copyText.select();
         copyText.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(copyText.value);
-        alert("Copied the link: " + copyText.value);
     }
     </script>
 {% endblock %}
