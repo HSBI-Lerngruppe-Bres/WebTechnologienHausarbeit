@@ -77,7 +77,7 @@
                 $('#player-list').append('<p>Error loading players.</p>');
             });
         }
-        setInterval(updatePlayerList, 5000);
+        setInterval(updatePlayerList, 1000);
     });
     </script>
     <script>
@@ -96,5 +96,14 @@
         navigator.clipboard.writeText(copyText.value);
         alert("Copied the link: " + copyText.value);
     }
+    </script>
+    <script>
+    window.addEventListener('beforeunload', function(event) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/v1/lobby/leave', false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ message: 'Tab is closing' }));
+        event.returnValue = 'Are you sure you want to leave?';
+    });
     </script>
 {% endblock %}

@@ -92,3 +92,29 @@ def remove_inactive_players_from_game(timeout: timedelta):
         for game in player.games:
             game.players.remove(player)
         db.session.commit()
+
+
+def remove_player(player_id: int) -> bool:
+    """
+    Removes a player and all associated data from the database.
+
+    Args:
+        player_id (int): The ID of the player to remove.
+
+    Returns:
+        bool: True if the removal was successful, False otherwise.
+    """
+    try:
+        player = Player.query.get(player_id)
+        if not player:
+            print("Player not found.")
+            return False
+        for game in player.games:
+            game.players.remove(player)
+        db.session.delete(player)
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing the player: {e}")
+        return False
