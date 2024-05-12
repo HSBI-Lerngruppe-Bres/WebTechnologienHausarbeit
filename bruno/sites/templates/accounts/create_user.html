@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Bruno - Login & Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center pt-3 g-3">
+    <!-- Login Form -->
+    <div class="col-12 col-sm-8 col-lg-4 col-xl-3">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Choose your Name</h3>
+                <form method="post">
+                    {{ login_form.hidden_tag() }}
+                    
+                    <!-- Username Field -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <div class="form-floating flex-grow-1">
+                            {{ login_form.username(class="form-control", id="username", placeholder="Player Name") }}
+                            <label for="username">{{ login_form.username.label.text }}</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary" name="login_submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ 
+</div>
+{% endblock %}

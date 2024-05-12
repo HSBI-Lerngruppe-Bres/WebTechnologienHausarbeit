@@ -5,10 +5,7 @@ from flask_login import UserMixin
 class User(db.Model, UserMixin):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=True)
-    usertype_id = db.Column(
-        db.Integer, db.ForeignKey('usertype.id'), nullable=True)
+    username = db.Column(db.String(80), unique=False, nullable=False)
     owned_games = db.relationship('Game', backref='owner', lazy=True)
 
     def __repr__(self):
@@ -16,16 +13,6 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return self.id
-
-
-class UserType(db.Model):
-    __tablename__ = 'usertype'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(255), nullable=True)
-    users = db.relationship('User', backref='usertype', lazy=True)
-
-    def __repr__(self):
-        return f'UserType(name={self.name})'
 
 
 players_games = db.Table('players_games',
