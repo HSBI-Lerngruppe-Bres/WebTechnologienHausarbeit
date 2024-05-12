@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row justify-content-center pt-3 g-3">
         <!-- Player List on the Left -->
-        <div class="col-12 col-sm-10 col-lg-3">
+        <div class="col-12 col-sm-10 col-lg-5 col-xl-4">
             <div class="card">
                <div class="card-body">
                     <h3 class="card-title">Player List</h3>
@@ -14,20 +14,23 @@
                             No players yet.
                         {% endfor %}
                     </ul>
-                    <div class="input-group mb-3 pt-2">
-                        <span class="input-group-text"><label for="inviteLink" class="">Invite Others</label></span>
+                    <div class="input-group mt-3">
+                        <span class="input-group-text"><i class="bi bi-hash"></i></span>                    
+                        <span class="input-group-text flex-grow-1">{{ hashed_game_id }}</span>
+                    </div>
+                    <div class="input-group mt-2">
+                        <span class="input-group-text"><label for="inviteLink" class="">Invite</label></span>
                         <input type="text" id="inviteLink" class="form-control" value="{{ url_for('sites.game.join', hashed_game_id=hashed_game_id, _external=True) }}" readonly>
                         <button class="btn btn-outline-secondary" type="button" id="copyButton" onclick="copyInviteLink()">
                             <i class="bi bi-copy"></i>
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
 
         <!-- Settings Menu on the Right -->
-        <div class="col-12 col-sm-10 col-lg-6">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-6 col-xl-6">
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Settings</h3>
