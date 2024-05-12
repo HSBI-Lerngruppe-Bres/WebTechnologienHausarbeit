@@ -5,9 +5,29 @@ from flask_login import LoginManager
 from pathlib import Path
 from flask_migrate import Migrate
 from .database.models import Player
+from datetime import timedelta
+from database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
+from threading import Thread
+from time import sleep
 
 
-def create_app():
+def remove_inactive_players_periodically():
+    """Periodicly runs to remove the inactive Players
+    """
+    while True:
+        timeout_remove = timedelta(minutes=15)
+        timeout_leave = timedelta(minutes=1)
+        remove_inactive_players(timeout_remove)
+        remove_inactive_players_from_game(timeout_leave)
+        sleep(10)
+
+
+def create_app() -> Flask:
+    """Creates the flask app
+
+    Returns:
+        Flask: The flask app
+    """
     logging.basicConfig(level=logging.INFO)
     logging.info(f"Creating app")
 
@@ -48,4 +68,9 @@ def create_app():
     app.register_blueprint(base_site)
 
     # TODO Logging stuff
+
+    # Setup removal of inactive players
+    logging.debug(f"Setup removal of inactive players")
+    inactive_player_removel_tread = Thread(target=remove_inactive_players)
+    inactive_player_removel_tread.start()
     return app

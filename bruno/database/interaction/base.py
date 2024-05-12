@@ -77,7 +77,8 @@ def create_player(name: str) -> Optional[Player]:
     Returns:
         Optional[Player]: The player object from the database
     """
-    if not name:
+    if not name.strip():
+        flash("Player name cannot be empty.", 'warning')
         return None
 
     new_player = Player(name=name)

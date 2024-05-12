@@ -26,6 +26,7 @@ def lobby(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)
     players = get_players_by_game_id(game_id)
+    # TODO check if player in game
     # Logic to add the current player to the game's players
     # Redirect to the game page or display some confirmation message
     return render_template("lobby.html", hashed_game_id=hashed_game_id, players=players)

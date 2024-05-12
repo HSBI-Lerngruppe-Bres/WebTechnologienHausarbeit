@@ -1,5 +1,6 @@
 from . import db
 from flask_login import UserMixin
+from datetime import datetime, timezone
 
 
 class Player(db.Model, UserMixin):
@@ -7,6 +8,8 @@ class Player(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
     owned_games = db.relationship('Game', backref='owner', lazy=True)
+    last_active = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'User(id={self.id}, name={self.name})'
