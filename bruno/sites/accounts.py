@@ -20,10 +20,8 @@ def login_register():
     user = None
     if request.form and login_form.validate_on_submit():
         user = create_user(login_form.username.data)
-
     if user:
         login_user(user)
-
         next = request.args.get('next')
         # TODO possible security risk
         return redirect(next or url_for('sites.index'))

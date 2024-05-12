@@ -29,7 +29,7 @@ Follow these steps to set up the project locally:
 5. Activate the virtual environment:
    `poetry shell`
 6. Start the server:
-   `flask run`
+   `flask --app bruno:create_app run --debug --host 0.0.0.0`
 
 ## Usage
 
