@@ -6,20 +6,18 @@ from pathlib import Path
 from flask_migrate import Migrate
 from .database.models import Player
 from datetime import timedelta
-from database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
-from threading import Thread
+from .database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
 from time import sleep
+from flask_apscheduler import APScheduler
 
 
 def remove_inactive_players_periodically():
     """Periodicly runs to remove the inactive Players
     """
-    while True:
-        timeout_remove = timedelta(minutes=15)
-        timeout_leave = timedelta(minutes=1)
-        remove_inactive_players(timeout_remove)
-        remove_inactive_players_from_game(timeout_leave)
-        sleep(10)
+    timeout_remove = timedelta(minutes=15)
+    timeout_leave = timedelta(minutes=1)
+    remove_inactive_players(timeout_remove)
+    remove_inactive_players_from_game(timeout_leave)
 
 
 def create_app() -> Flask:
@@ -71,6 +69,9 @@ def create_app() -> Flask:
 
     # Setup removal of inactive players
     logging.debug(f"Setup removal of inactive players")
-    inactive_player_removel_tread = Thread(target=remove_inactive_players)
-    inactive_player_removel_tread.start()
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
+    scheduler.add_job(id='Removal of inactive players', func=remove_inactive_players_periodically,
+                      trigger='interval', seconds=10)
     return app
