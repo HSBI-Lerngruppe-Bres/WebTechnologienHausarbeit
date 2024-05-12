@@ -24,17 +24,6 @@
                         <a class="btn btn-primary" href="{{url_for("sites.games")}}">Play Now</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav mb-2 mb-lg-0 d-flex">
-                    {% if not current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary" aria-current="page" href="{{url_for("sites.accounts.login_register")}}">Login / Register</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="btn btn-outline-danger" aria-current="page" href="{{url_for("sites.accounts.logout")}}">Logout</a>
-                    </li>
-                    {% endif %}
-                </ul>
             </div>
         </div>
     </nav>
