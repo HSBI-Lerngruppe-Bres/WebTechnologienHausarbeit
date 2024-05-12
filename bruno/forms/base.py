@@ -4,6 +4,8 @@ from wtforms.validators import Optional, DataRequired, Length
 
 
 class CreateGameForm(FlaskForm):
+    """The create game form
+    """
     game_name = StringField('Game Name', validators=[DataRequired()])
     public = BooleanField('Public')
     password = PasswordField('Password', validators=[
@@ -14,10 +16,20 @@ class CreateGameForm(FlaskForm):
         super(CreateGameForm, self).__init__(*args, **kwargs)
         if not self.game_name.data:
             self.game_name.data = f"{kwargs.get(
-                'username', '')}'s Game"
+                'name', '')}'s Game"
 
 
 class JoinGameForm(FlaskForm):
+    """The join game form
+    """
     hashed_game_id = StringField('Game Code', validators=[DataRequired(), Length(
         min=5, max=10, message="Game code must be between 5 and 10 characters long.")])
     submit = SubmitField('Join Game')
+
+
+class CreatePlayerForm(FlaskForm):
+    """The create player form
+    """
+    name = StringField('Player Name', validators=[
+        DataRequired(), Length(min=4, max=20)])
+    submit = SubmitField('Login')
