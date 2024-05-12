@@ -12,7 +12,7 @@ def lobby_state(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)
     players = get_players_by_game_id(game_id)
-    players_data = [{'name': player.username, 'id': player.id}
+    players_data = [{'name': player.name, 'id': player.id}
                     for player in players]
     game_info = {
         'game_id': game_id,
