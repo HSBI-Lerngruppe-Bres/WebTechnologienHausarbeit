@@ -1,23 +1,23 @@
 import os
 import logging
-from flask import Flask
+from flask import Flask, current_app
 from flask_login import LoginManager
 from pathlib import Path
 from flask_migrate import Migrate
 from .database.models import Player
 from datetime import timedelta
 from .database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
-from time import sleep
 from flask_apscheduler import APScheduler
 
 
-def remove_inactive_players_periodically():
+def remove_inactive_players_periodically(app: Flask):
     """Periodicly runs to remove the inactive Players
     """
-    timeout_remove = timedelta(minutes=15)
-    timeout_leave = timedelta(minutes=1)
-    remove_inactive_players(timeout_remove)
-    remove_inactive_players_from_game(timeout_leave)
+    with app.app_context():
+        timeout_remove = timedelta(minutes=15)
+        timeout_leave = timedelta(seconds=20)
+        remove_inactive_players(timeout_remove)
+        remove_inactive_players_from_game(timeout_leave)
 
 
 def create_app() -> Flask:
@@ -72,6 +72,6 @@ def create_app() -> Flask:
     scheduler = APScheduler()
     scheduler.init_app(app)
     scheduler.start()
-    scheduler.add_job(id='Removal of inactive players', func=remove_inactive_players_periodically,
+    scheduler.add_job(id='Removal of inactive players', func=remove_inactive_players_periodically, args=[app],
                       trigger='interval', seconds=10)
     return app
