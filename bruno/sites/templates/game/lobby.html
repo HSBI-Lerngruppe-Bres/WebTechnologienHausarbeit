@@ -7,13 +7,21 @@
             <div class="card">
                <div class="card-body">
                     <h3 class="card-title">Player List</h3>
-                    <ul class="list-group" id="players">
+                    <ul class="list-group" id="players" aria-label="List of players">
                         {% for player in players %}
                             <li class="list-group-item">{{ player.name }}</li>
                         {% else %}
                             No players yet.
                         {% endfor %}
                     </ul>
+                    <div class="input-group mb-3 pt-2">
+                        <span class="input-group-text"><label for="inviteLink" class="">Invite Others</label></span>
+                        <input type="text" id="inviteLink" class="form-control" value="{{ url_for('sites.game.join', hashed_game_id=hashed_game_id, _external=True) }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="copyButton" onclick="copyInviteLink()">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -69,5 +77,21 @@
         setInterval(updatePlayerList, 5000);
     });
     </script>
-
+    <script>
+    function copyInviteLink() {
+        /**
+        * Copies the game invitation link to the clipboard.
+        * 
+        * This function triggers when the user clicks the 'Copy Link' button.
+        * It selects the content of the input element that holds the game URL,
+        * copies that content to the clipboard, and alerts the user that the
+        * action has been completed.
+        */
+        var copyText = document.getElementById("inviteLink");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        alert("Copied the link: " + copyText.value);
+    }
+    </script>
 {% endblock %}
