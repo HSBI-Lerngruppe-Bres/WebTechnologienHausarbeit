@@ -4,14 +4,12 @@ from flask_login.utils import login_required, current_user
 from bruno.database.interaction.base import get_active_games, create_games, create_player
 from bruno.forms.base import CreateGameForm, JoinGameForm, CreatePlayerForm
 from hashids import Hashids
-from bruno.api import api
 from flask_login import logout_user, login_user
 
 site = Blueprint("sites", __name__,
                  template_folder="templates", url_prefix="/")
 
 site.register_blueprint(game_site)
-site.register_blueprint(api)
 
 
 @site.get("/")
@@ -32,8 +30,8 @@ def games():
                             current_user)
         hashids = Hashids(salt=current_app.config.get(
             "SECRET_KEY"), min_length=5)
-        return redirect(url_for('sites.game.join', hashed_game_id=hashids.encode(game.id)))
-
+        if game:
+            return redirect(url_for('sites.game.join', hashed_game_id=hashids.encode(game.id)))
     elif 'join_game_submit' in request.form and join_game_form.validate_on_submit():
         return redirect(url_for('sites.game.join', hashed_game_id=join_game_form.hashed_game_id.data))
 

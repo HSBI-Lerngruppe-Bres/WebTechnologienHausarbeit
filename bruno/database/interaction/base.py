@@ -1,4 +1,4 @@
-from bruno.database.models import Game, players_games
+from bruno.database.models import Game
 from bruno.database import db
 from sqlalchemy import func
 from typing import List, Optional
@@ -18,11 +18,11 @@ def get_active_games() -> List[dict]:
         Game.name,
         Game.id,
         Game.password_hash,
-        func.count(players_games.c.player_id).label('player_count')
+        func.count(Player.id).label('player_count')
     ).filter(
         Game.public == 0
     ).outerjoin(
-        players_games, players_games.c.game_id == Game.id
+        Player, Player.game_id == Game.id
     ).group_by(
         Game.id
     ).all()
@@ -54,7 +54,7 @@ def create_games(game_name: str, public: bool, password: str, owner: Player) -> 
     try:
         new_game = Game(
             name=game_name,
-            owner_id=owner.id,
+            # owner_id=owner.id,
             public=0 if public else 1,
             password_hash=generate_password_hash(
                 password) if password else None

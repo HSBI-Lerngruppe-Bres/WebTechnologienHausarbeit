@@ -8,11 +8,7 @@
                <div class="card-body">
                     <h3 class="card-title">Player List</h3>
                     <ul class="list-group" id="players" aria-label="List of players">
-                        {% for player in players %}
-                            <li class="list-group-item">{{ player.name }}</li>
-                        {% else %}
-                            No players yet.
-                        {% endfor %}
+                        Loading ...
                     </ul>
                     <div class="input-group mt-3">
                         <span class="input-group-text"><i class="bi bi-hash"></i></span>                    
@@ -43,62 +39,37 @@
 {% endblock %}
 
 {% block script %}
-    <script
-			  src="https://code.jquery.com/jquery-3.7.1.min.js"
-			  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-			  crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
-    $(document).ready(function() {
-        function updatePlayerList() {
-            /**
-            * Periodically updates the list of players in the game lobby.
-            * 
-            * This function fetches the current list of players from a Flask API endpoint and updates
-            * the HTML of the page to reflect any changes in the lobby. It uses AJAX to make a GET request
-            * to the server and then dynamically updates the content of a list in the HTML without reloading the page.
-            * The function is set to run every 5 seconds, providing near real-time updates of the player list.
-            *
-            * The `hashedGameId` is a variable interpolated from the server-side template, which represents
-            * a securely hashed identifier for the game. This ID is used to make the API call to the correct endpoint.
-            */
-            const hashedGameId = '{{hashed_game_id}}';
-            $.getJSON(`/api/v1/lobby/state/${hashedGameId}`, function(data) {
-                const players = data.players;
-                const $list = $('#players');
-                $list.empty();
-                players.forEach(function(player) {
-                    $list.append(`<li class="list-group-item">${player.name}</li>`);
-                });
-                if (players.length < 1){
-                    $list.append("No players yet.");
-                }   
-            }).fail(function() {
-                console.error("Failed to fetch players.");
-                $('#player-list').append('<p>Error loading players.</p>');
-            });
-        }
+    var socket = io('/lobby');
 
-        window.addEventListener('beforeunload', function(event) {
-            /**
-            * Handles the event before the browser window is unloaded.
-            * This event listener is triggered when the user attempts to close the tab, refresh the page, or navigate away.
-            * It sends a synchronous POST request to the server, informing it that the user is attempting to leave the lobby.
-            * The use of a synchronous request ensures that the message is sent before the page unloads, although it may
-            * negatively impact user experience by briefly freezing the UI. The request includes a JSON payload with a
-            * message indicating the tab is closing.
-            *
-            * @param {Event} event - The event object provided by the 'beforeunload' event.
-            */
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/api/v1/lobby/leave', false);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ message: 'Tab is closing' }));
-            event.returnValue = 'Are you sure you want to leave?';
-        });
-        setInterval(updatePlayerList, 5000);
+    socket.on('connect', function() {
+        socket.emit('join', {hashed_game_id: '{{ hashed_game_id }}'});
     });
+
+    socket.on('update_players', function(data) {
+        var playersList = document.getElementById('players');
+        if (data.players.length > 0) {
+            playersList.innerHTML = '';
+            data.players.forEach(function(player) {
+            var li = document.createElement('li');
+            li.appendChild(document.createTextNode(player.name));
+            li.className = 'list-group-item';
+            playersList.appendChild(li);
+        });
+    } else {
+        playersList.innerHTML = 'No players yet.';
+    }
+    });
+
+    socket.on('player_left', function(data) {
+        console.log(data.message);
+    });
+
+    function leaveGame() {
+        socket.emit('leave', {hashed_game_id: '{{ hashed_game_id }}'});
+    }
     </script>
-    
     <script>
     function copyInviteLink() {
         /**

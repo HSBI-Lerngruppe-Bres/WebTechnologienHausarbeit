@@ -11,12 +11,10 @@ def get_players_by_game_id(game_id: int) -> List[Player]:
         game_id (int): The ID of the game to retrieve players from.
 
     Returns:
-        List[Player]: A list of Player objects that are players in the specified game.
+        List[Player]: A list of Player objects that are associated with the specified game.
     """
-    game = Game.query.get(game_id)
-    if game:
-        return game.players
-    return []
+    players = Player.query.filter(Player.game_id == game_id).all()
+    return players
 
 
 def player_join_game(player_id: int, game_id: int) -> bool:
@@ -36,16 +34,32 @@ def player_join_game(player_id: int, game_id: int) -> bool:
         if not game or not player:
             print("Game or player not found.")
             return False
-        if player in game.players:
-            print("Player is already in the game.")
+        if player.game_id == game.id:
+            print("Player is already in this game.")
             return False
-        game.players.append(player)
+        player.game_id = game.id  # Set the game ID directly in the player record
         db.session.commit()
         return True
     except Exception as e:
         db.session.rollback()
         print(f"An error occurred while adding player to game: {e}")
         return False
+
+
+def get_game_id_by_player_id(player_id: int) -> int:
+    """
+    Retrieves the game ID for a given player ID.
+
+    Args:
+        player_id (int): The ID of the player whose game ID is to be retrieved.
+
+    Returns:
+        int: The ID of the game associated with the player, or None if no game is associated or the player does not exist.
+    """
+    player = Player.query.get(player_id)
+    if player and player.game_id:
+        return player.game_id
+    return None
 
 
 def update_player_activity(player_id: int):
@@ -108,9 +122,7 @@ def remove_player(player_id: int) -> bool:
         player = Player.query.get(player_id)
         if not player:
             print("Player not found.")
-            return False
-        for game in player.games:
-            game.players.remove(player)
+            return False        
         db.session.delete(player)
         db.session.commit()
         return True
