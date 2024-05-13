@@ -36,7 +36,7 @@ class GameLobbyNamespace(Namespace):
         """Handles player disconnection."""
         game_id = get_game_id_by_player_id(current_user.id)
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
-        hashed_game_id = hashids.encode(game_id)[0]
+        hashed_game_id = hashids.encode(game_id)
         if game_id:
             remove_player(current_user.id)
             self.send_update_player(game_id, hashed_game_id)
