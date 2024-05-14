@@ -16,7 +16,7 @@
                     </div>
                     <div class="input-group mt-2">
                         <span class="input-group-text"><label for="inviteLink" class="">Invite</label></span>
-                        <input type="text" id="inviteLink" class="form-control" value="{{ url_for('sites.game.join', hashed_game_id=hashed_game_id, _external=True) }}" readonly>
+                        <input type="text" id="inviteLink" class="form-control" value="{{ url_for('sites.join', hashed_game_id=hashed_game_id, _external=True) }}" readonly>
                         <button class="btn btn-outline-secondary" type="button" id="copyButton" onclick="copyInviteLink()">
                             <i class="bi bi-copy"></i>
                         </button>
@@ -111,7 +111,7 @@
         }
         console.log("Game is starting...");
         document.body.innerHTML = '<h1>Game is loading ...</h1>';
-        fetch("{{ url_for('sites.game.game', hashed_game_id=hashed_game_id, _external=True) }}")
+        fetch("{{ url_for('sites.game', hashed_game_id=hashed_game_id, _external=True) }}")
         .then(response => response.text())
         .then(html => {
             document.body.innerHTML = html;

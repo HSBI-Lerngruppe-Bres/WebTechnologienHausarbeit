@@ -10,7 +10,7 @@ from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 from .database import db
 from .socketio.lobby import GameLobbyNamespace
-from .sites.base import site as base_site
+from .sites import site as base_site
 
 # from .database.interaction import remove_inactive_players, remove_inactive_players_from_game
 # def remove_inactive_players_periodically(app: Flask):
@@ -29,6 +29,8 @@ def create_app() -> Flask:
     Returns:
         Flask: The flask app
     """
+    # TODO Maybe split into multiple functions and files
+
     logging.basicConfig(level=logging.INFO)
     logging.info(f"Creating app")
 
@@ -49,7 +51,6 @@ def create_app() -> Flask:
         logging.getLogger().setLevel(logging.DEBUG)
         logging.debug(f"App created in debug mode at: {INSTANCE_PATH}")
         # TODO Handle other Debug stuff
-        # TODO Maybe split into multiple functions and files
 
     logging.debug(f"Initialize database")
     db.init_app(app)
