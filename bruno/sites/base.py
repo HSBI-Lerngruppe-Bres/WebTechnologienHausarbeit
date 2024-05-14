@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
 from .game import site as game_site
 from flask_login.utils import login_required, current_user
-from bruno.database.interaction.base import get_active_games, create_games, create_player
+from bruno.database import get_active_games, create_games, create_player
 from bruno.forms.base import CreateGameForm, JoinGameForm, CreatePlayerForm
 from hashids import Hashids
 from flask_login import logout_user, login_user

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, current_app
 from flask_login import login_required
 from hashids import Hashids
-from bruno.database.interaction.game import get_players_by_game_id, game_has_password, check_game_password
+from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game_password
 from bruno.forms.base import GamePasswordForm
 
 site = Blueprint("game", __name__,

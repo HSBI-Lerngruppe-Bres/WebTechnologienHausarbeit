@@ -12,7 +12,7 @@ from .database import db
 from .socketio.lobby import GameLobbyNamespace
 from .sites.base import site as base_site
 
-# from .database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
+# from .database.interaction import remove_inactive_players, remove_inactive_players_from_game
 # def remove_inactive_players_periodically(app: Flask):
 #    """Periodicly runs to remove the inactive Players
 #    """
@@ -67,11 +67,6 @@ def create_app() -> Flask:
 
     logging.debug(f"Setup blueprints")
     app.register_blueprint(base_site)
-
-    logging.debug(f"Setup Flask-SocketIO")
-    socketio = SocketIO()
-    socketio.init_app(app)
-    socketio.on_namespace(GameLobbyNamespace('/lobby'))
 
     # TODO Logging stuff
 
