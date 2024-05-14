@@ -3,16 +3,15 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction.game import get_players_by_game_id, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id
+from bruno.database.interaction.game import get_players_by_game_id, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         if not current_user.is_authenticated:
-            emit('authentication_failed', {
+            emit('kick', {
                  'message': 'User not authenticated'}, namespace='/lobby')
-            # disconnect()
             return
         return f(*args, **kwargs)
     return wrapped
@@ -57,8 +56,11 @@ class GameLobbyNamespace(Namespace):
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         # TODO Check if allowed
-        # TODO Check if already in game SMEWHAT DONE
         game_id = hashids.decode(hashed_game_id)[0]
+        if not check_game_join(game_id):
+            emit('kick', {'message': 'Game already started'},
+                 namespace='/lobby')
+            return
         join_room(hashed_game_id)
         player_join_game(current_user.id, game_id)
         self.send_update_player(game_id, hashed_game_id)
@@ -100,4 +102,5 @@ class GameLobbyNamespace(Namespace):
         if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME"):
             emit("start_game", {"start": False}, room=hashed_game_id)
             return
+        start_game(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)

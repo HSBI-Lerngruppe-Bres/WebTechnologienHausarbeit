@@ -25,6 +25,7 @@ class Game(db.Model):
     name = db.Column(db.String(100), nullable=False)
     public = db.Column(db.Integer, nullable=False)
     password_hash = db.Column(db.String(255), nullable=True)
+    joinable = db.Column(db.Boolean, default=True, nullable=False)
     settings_starting_card_amount = db.Column(db.Integer, default=7)
     settings_black_card_finish = db.Column(db.Boolean, default=True)
     settings_black_on_black = db.Column(db.Boolean, default=False)

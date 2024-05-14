@@ -119,7 +119,7 @@
         .catch(error => console.error('Error loading the game interface:', error));
     });
 
-    socket.on('authentication_failed', function(data) {
+    socket.on('kick', function(data) {
         alert(data.message);
         window.location.href = '{{url_for('sites.index')}}';
     });

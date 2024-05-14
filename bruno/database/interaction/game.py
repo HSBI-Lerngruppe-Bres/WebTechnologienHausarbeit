@@ -37,7 +37,7 @@ def player_join_game(player_id: int, game_id: int) -> bool:
         if player.game_id == game.id:
             print("Player is already in this game.")
             return False
-        player.game_id = game.id  # Set the game ID directly in the player record
+        player.game_id = game.id
         db.session.commit()
         return True
     except Exception as e:
@@ -210,3 +210,44 @@ def get_settings_by_game_id(game_id: int):
         "plus_two_stacking": game.settings_plus_two_stacking
     }
     return settings
+
+
+def check_game_join(game_id: int) -> bool:
+    """Checks if the game is joinable or ingame
+
+    Args:
+        game_id (int): The game id of the game
+
+    Returns:
+        bool: If the game is joinable
+    """
+    game = Game.query.get(game_id)
+    return game.joinable
+
+
+def start_game(game_id: int) -> bool:
+    """Starts the game by setting it to unjoinable.
+
+    Args:
+        game_id (int): The id of the game to be started.
+
+    Returns:
+        bool: True if the game was successfully updated, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if game and game.joinable:
+            game.joinable = False
+            db.session.commit()
+            print(f"Game {game_id} started. It is now unjoinable.")
+            return True
+        elif game and not game.joinable:
+            print(f"Game {game_id} was already started.")
+            return False
+        else:
+            print("Game not found.")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"Failed to start game {game_id}: {e}")
+        return False
