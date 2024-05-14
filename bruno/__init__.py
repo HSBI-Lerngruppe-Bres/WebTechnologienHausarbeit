@@ -29,8 +29,6 @@ def create_app() -> Flask:
     Returns:
         Flask: The flask app
     """
-    # TODO Maybe split into multiple functions and files
-
     logging.basicConfig(level=logging.INFO)
     logging.info(f"Creating app")
 
@@ -50,7 +48,6 @@ def create_app() -> Flask:
     if app.config.get('DEBUG', False):
         logging.getLogger().setLevel(logging.DEBUG)
         logging.debug(f"App created in debug mode at: {INSTANCE_PATH}")
-        # TODO Handle other Debug stuff
 
     logging.debug(f"Initialize database")
     db.init_app(app)
@@ -68,9 +65,6 @@ def create_app() -> Flask:
 
     logging.debug(f"Setup blueprints")
     app.register_blueprint(base_site)
-
-    # TODO Logging stuff
-
     # Setup removal of inactive players
     """logging.debug(f"Setup removal of inactive players")
     scheduler = APScheduler()

@@ -434,3 +434,16 @@ def check_game(game_id: int) -> bool:
     """
     game = Game.query.get(game_id)
     return game is not None
+
+
+def check_player_in_game(player: Player) -> bool:
+    """Check if the player is in a game
+
+    Args:
+        game_id (int): The game_id to check for
+        player (Player): The player that could be in the game
+
+    Returns:
+        bool: If the player is in the game
+    """
+    return not player.game_id is None

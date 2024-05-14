@@ -1,4 +1,4 @@
-from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game, check_game_password, get_active_games, create_games, create_player, check_owner
+from bruno.database.interaction import check_player_in_game, get_players_by_game_id, game_has_password, check_game, check_game_password, get_active_games, create_games, create_player, check_owner
 from flask_login import login_required
 from flask import Blueprint, render_template, current_app
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
@@ -75,9 +75,8 @@ def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
         hashed_game_id)) > 0 else None
-    if not game_id or not check_game(game_id):
+    if not game_id or not check_game(game_id) or check_player_in_game(current_user):
         return redirect(url_for("sites.index"))
-    # TODO check if player in game
     if game_has_password(game_id) and not check_owner(game_id, current_user):
         game_password_form = GamePasswordForm()
         if not (game_password_form.validate_on_submit() and check_game_password(game_id, game_password_form.password.data)):
@@ -92,7 +91,7 @@ def game(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
         hashed_game_id)) > 0 else None
-    if not game_id or not check_game(game_id):
+    if not game_id or not check_game(game_id) or check_player_in_game(current_user):
         return redirect(url_for("sites.index"))
-    # TODO check if player in game
+    check_player_in_game(game_id, current_user)
     return render_template("game.html", hashed_game_id=hashed_game_id)
