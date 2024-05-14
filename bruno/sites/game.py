@@ -1,7 +1,7 @@
-from flask import Blueprint, redirect, url_for, render_template, current_app
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, current_app
+from flask_login import login_required
 from hashids import Hashids
-from bruno.database.interaction.game import player_join_game, get_players_by_game_id
+from bruno.database.interaction.game import get_players_by_game_id, check_game_join
 
 site = Blueprint("game", __name__,
                  template_folder="templates/game", url_prefix="/game")
@@ -14,7 +14,6 @@ def join(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)[0]
     # TODO redirect or password requesr
     # TODO redirect if no game
-    # TODO Check for game staretet
     # TODO check if player in game
     players = get_players_by_game_id(game_id)
     return render_template("lobby.html", hashed_game_id=hashed_game_id)
