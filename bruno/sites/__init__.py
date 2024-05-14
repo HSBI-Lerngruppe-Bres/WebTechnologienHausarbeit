@@ -73,9 +73,9 @@ def logout():
 @login_required
 def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
-    game_id = hashids.decode(hashed_game_id)[0] if hashids.decode(
-        hashed_game_id) is not None else None
-    if not game_id or check_game(game_id):
+    game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
+        hashed_game_id)) > 0 else None
+    if not game_id or not check_game(game_id):
         return redirect(url_for("sites.index"))
     # TODO check if player in game
     if game_has_password(game_id) and not check_owner(game_id, current_user):
@@ -90,9 +90,9 @@ def join(hashed_game_id):
 @login_required
 def game(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
-    game_id = hashids.decode(hashed_game_id)[0]if hashids.decode(
-        hashed_game_id) is not None else None
-    if not game_id or check_game(game_id):
+    game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
+        hashed_game_id)) > 0 else None
+    if not game_id or not check_game(game_id):
         return redirect(url_for("sites.index"))
     # TODO check if player in game
     return render_template("game.html", hashed_game_id=hashed_game_id)
