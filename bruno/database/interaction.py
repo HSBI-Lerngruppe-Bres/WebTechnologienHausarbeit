@@ -130,7 +130,13 @@ def player_join_game(player_id: int, game_id: int) -> bool:
         if player.game_id == game.id:
             print("Player is already in this game.")
             return False
+
         player.game_id = game.id
+        players_in_game = get_players_by_game_id(game_id)
+        if len(players_in_game) <= 1:
+            player.is_game_owner = True
+        else:
+            player.is_game_owner = False
         db.session.commit()
         return True
     except Exception as e:
@@ -232,6 +238,28 @@ def remove_empty_game(game_id: int):
         remove_game(game_id)
 
 
+def select_new_owner(game_id: int) -> bool:
+    """
+    Selects a new owner for the game from the remaining players.
+
+    Args:
+        game_id (int): The ID of the game.
+
+    Returns:
+        bool: True if a new owner was successfully selected, False otherwise.
+    """
+    remaining_players = Player.query.filter_by(
+        game_id=game_id).order_by(Player.last_active).all()
+    if remaining_players:
+        print("new", new_owner.game_id, new_owner.is_game_owner)
+        new_owner = remaining_players[0]
+        new_owner.is_game_owner = True
+        print("new", new_owner.game_id, new_owner.is_game_owner)
+        db.session.commit()
+        return True
+    return False
+
+
 def remove_player(player_id: int) -> bool:
     """
     Removes a player and all associated data from the database.
@@ -250,6 +278,8 @@ def remove_player(player_id: int) -> bool:
         db.session.delete(player)
         db.session.commit()
         remove_empty_game(player.game_id)
+        if check_owner(player.game_id, player):
+            select_new_owner(player.game_id)
         return True
     except Exception as e:
         db.session.rollback()
@@ -373,4 +403,20 @@ def check_game_password(game_id: int, password: str) -> bool:
     game = Game.query.get(game_id)
     if game and game.password_hash:
         return check_password_hash(game.password_hash, password)
+    return False
+
+
+def check_owner(game_id: int, player: Player) -> bool:
+    """
+    Checks if the given player is the owner of the specified game.
+
+    Args:
+        game_id (int): The ID of the game.
+        player_id (int): The ID of the player.
+
+    Returns:
+        bool: True if the player is the owner, False otherwise.
+    """
+    if player and player.game_id == game_id and player.is_game_owner:
+        return True
     return False
