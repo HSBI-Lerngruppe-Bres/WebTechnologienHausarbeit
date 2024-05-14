@@ -13,6 +13,7 @@ site = Blueprint("game", __name__,
 def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)[0]
+    # TODO check for not valid game id
     # TODO check if user is owner then no password
     # TODO redirect if no game
     # TODO check if player in game

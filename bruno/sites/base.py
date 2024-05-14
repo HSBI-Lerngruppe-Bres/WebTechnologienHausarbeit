@@ -31,7 +31,6 @@ def games():
         hashids = Hashids(salt=current_app.config.get(
             "SECRET_KEY"), min_length=5)
         if game:
-            # TODO check if working
             return redirect(url_for('sites.game.join', hashed_game_id=hashids.encode(game.id)))
     elif 'join_game_submit' in request.form and join_game_form.validate_on_submit():
         return redirect(url_for('sites.game.join', hashed_game_id=join_game_form.hashed_game_id.data))

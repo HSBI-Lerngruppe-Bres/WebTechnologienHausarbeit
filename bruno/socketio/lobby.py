@@ -55,7 +55,7 @@ class GameLobbyNamespace(Namespace):
         """Handles player joining a game."""
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
-        # TODO Check if allowed
+        # TODO Check if allowed nessasary?
         game_id = hashids.decode(hashed_game_id)[0]
         if not check_game_join(game_id):
             emit('kick', {'message': 'Game already started'},
