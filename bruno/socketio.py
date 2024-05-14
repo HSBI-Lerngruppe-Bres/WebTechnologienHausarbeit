@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import get_players_by_game_id, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -82,11 +82,10 @@ class GameNamespace(Namespace):
     def on_update_settings(self, data):
         """Handles the settings update event
         """
-        # TODO check if player permittet (OWNER)
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
-        if self.check_settings(data["settings"]):
+        if self.check_settings(data["settings"]) and check_owner(game_id, current_user):
             update_settings(game_id, data["settings"])
         self.send_update_settings(game_id, hashed_game_id)
 
@@ -95,11 +94,10 @@ class GameNamespace(Namespace):
         """When a player starts the game
         """
         print("STarting", data)
-        # TODO check if player permittet (OWNER)
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
-        if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME"):
+        if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME") and not check_owner(game_id, current_user):
             emit("start_game", {"start": False}, room=hashed_game_id)
             return
         start_game(game_id)

@@ -61,6 +61,8 @@ def create_games(game_name: str, public: bool, password: str, owner: Player) -> 
             password_hash=generate_password_hash(
                 password) if password else None
         )
+        owner.is_game_owner = True
+        owner.game_id = new_game.id
         db.session.add(new_game)
         db.session.commit()
         return new_game
@@ -131,6 +133,7 @@ def player_join_game(player_id: int, game_id: int) -> bool:
             print("Player is already in this game.")
             return False
         player.game_id = game.id
+        player.is_game_owner = False
         db.session.commit()
         return True
     except Exception as e:
@@ -373,4 +376,20 @@ def check_game_password(game_id: int, password: str) -> bool:
     game = Game.query.get(game_id)
     if game and game.password_hash:
         return check_password_hash(game.password_hash, password)
+    return False
+
+
+def check_owner(game_id: int, player: Player) -> bool:
+    """
+    Checks if the given player is the owner of the specified game.
+
+    Args:
+        game_id (int): The ID of the game.
+        player_id (int): The ID of the player.
+
+    Returns:
+        bool: True if the player is the owner, False otherwise.
+    """
+    if player and player.game_id == game_id and player.is_game_owner:
+        return True
     return False

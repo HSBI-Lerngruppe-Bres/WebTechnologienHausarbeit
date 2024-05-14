@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 6b62a1bcd456
+Revision ID: 1a48e3596bd7
 Revises: 
-Create Date: 2024-05-13 19:53:09.860489
+Create Date: 2024-05-14 17:46:00.533962
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6b62a1bcd456'
+revision = '1a48e3596bd7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,12 +23,18 @@ def upgrade():
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('public', sa.Integer(), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=True),
+    sa.Column('joinable', sa.Boolean(), nullable=False),
+    sa.Column('settings_starting_card_amount', sa.Integer(), nullable=True),
+    sa.Column('settings_black_card_finish', sa.Boolean(), nullable=True),
+    sa.Column('settings_black_on_black', sa.Boolean(), nullable=True),
+    sa.Column('settings_plus_two_stacking', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('player',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=80), nullable=False),
     sa.Column('game_id', sa.Integer(), nullable=True),
+    sa.Column('is_game_owner', sa.Boolean(), nullable=False),
     sa.Column('last_active', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['game_id'], ['game.id'], ),
     sa.PrimaryKeyConstraint('id')

@@ -9,6 +9,7 @@ class Player(db.Model, UserMixin):
     name = db.Column(db.String(80), unique=False, nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey(
         'game.id'))
+    is_game_owner = db.Column(db.Boolean, default=False, nullable=False)
     last_active = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
 
