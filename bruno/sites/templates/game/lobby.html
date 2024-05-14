@@ -33,7 +33,7 @@
                     <!-- Starting Card Amount -->
                     <div class="input-group mb-3">
                         <span class="input-group-text">Starting Card Amount</span>
-                        <input type="number" class="form-control" id="starting_card_amount" value="7" min="1" max="20" onchange="updateSettings()">
+                        <input type="number" class="form-control" id="starting_card_amount" value="7" min="2" max="20" onchange="updateSettings()">
                     </div>
                     <!-- Black Card Finish Checkbox -->
                     <div class="input-group mb-3">
@@ -106,6 +106,7 @@
 
     socket.on('start_game', function(data) {
         if (!data.start) {
+            document.getElementById('startGameButton').disabled = false;
             return
         }
         console.log("Game is starting...");
@@ -117,7 +118,6 @@
         })
         .catch(error => console.error('Error loading the game interface:', error));
     });
-
 
     function updateSettings() {
         var settingsData = {

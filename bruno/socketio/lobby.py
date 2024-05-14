@@ -32,6 +32,12 @@ class GameLobbyNamespace(Namespace):
         emit('update_settings', {'settings': settings_data},
              room=hashed_game_id)
 
+    @staticmethod
+    def check_settings(settings: dict):
+        if settings.get("starting_card_amount") > 20 or 2 > settings.get("starting_card_amount"):
+            return False
+        return True
+
     def on_join(self, data):
         """Handles player joining a game."""
         hashed_game_id = data['hashed_game_id']
@@ -62,8 +68,8 @@ class GameLobbyNamespace(Namespace):
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
-        update_settings(game_id, data["settings"])
-        # TODO CHeck if numbers inbounds
+        if self.check_settings(data["settings"]):
+            update_settings(game_id, data["settings"])
         self.send_update_settings(game_id, hashed_game_id)
 
     def on_start_game(self, data):
@@ -71,6 +77,10 @@ class GameLobbyNamespace(Namespace):
         """
         print("STarting", data)
         # TODO check if player permittet (OWNER)
-        # TODO Check player count
         hashed_game_id = data['hashed_game_id']
+        hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
+        game_id = hashids.decode(hashed_game_id)[0]
+        if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME"):
+            emit("start_game", {"start": False}, room=hashed_game_id)
+            return
         emit("start_game", {"start": True}, room=hashed_game_id)
