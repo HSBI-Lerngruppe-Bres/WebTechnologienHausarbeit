@@ -1,16 +1,15 @@
-from bruno.forms.base import GamePasswordForm
-from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game_password
+from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game_password, get_active_games, create_games, create_player
 from flask_login import login_required
 from flask import Blueprint, render_template, current_app
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
 from flask_login.utils import login_required, current_user
-from bruno.database import get_active_games, create_games, create_player
-from bruno.forms.base import CreateGameForm, JoinGameForm, CreatePlayerForm
+from bruno.forms import CreateGameForm, JoinGameForm, CreatePlayerForm, GamePasswordForm
 from hashids import Hashids
 from flask_login import logout_user, login_user
 
 site = Blueprint("sites", __name__,
                  template_folder="templates", url_prefix="/")
+
 
 @site.get("/")
 def index():
@@ -69,6 +68,7 @@ def logout():
     logout_user()
     flash("You have been logged out.", "info")
     return redirect(url_for('sites.index'))
+
 
 @site.route('/join/<string:hashed_game_id>', methods=['GET', 'POST'])
 @login_required
