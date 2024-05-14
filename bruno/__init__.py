@@ -83,4 +83,12 @@ def create_app() -> Flask:
     scheduler.start()
     scheduler.add_job(id='Removal of inactive players', func=remove_inactive_players_periodically, args=[app],
                       trigger='interval', seconds=10)"""
-    return app, socketio
+    return app
+
+
+def create_socketio(app: Flask) -> SocketIO:
+    logging.debug(f"Setup Flask-SocketIO")
+    socketio = SocketIO()
+    socketio.init_app(app)
+    socketio.on_namespace(GameLobbyNamespace('/lobby'))
+    return socketio
