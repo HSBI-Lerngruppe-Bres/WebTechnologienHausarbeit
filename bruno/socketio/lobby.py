@@ -34,7 +34,7 @@ class GameLobbyNamespace(Namespace):
 
     @staticmethod
     def check_settings(settings: dict):
-        if settings.get("starting_card_amount") > 20 or 2 > settings.get("starting_card_amount"):
+        if int(settings.get("starting_card_amount")) > 20 or 2 > int(settings.get("starting_card_amount")):
             return False
         return True
 
