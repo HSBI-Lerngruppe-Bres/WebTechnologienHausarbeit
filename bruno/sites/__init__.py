@@ -81,7 +81,6 @@ def join(hashed_game_id):
         game_password_form = GamePasswordForm()
         if not (game_password_form.validate_on_submit() and check_game_password(game_id, game_password_form.password.data)):
             return render_template("password.html", hashed_game_id=hashed_game_id, game_password_form=game_password_form)
-    players = get_players_by_game_id(game_id)
     return render_template("lobby.html", hashed_game_id=hashed_game_id)
 
 
