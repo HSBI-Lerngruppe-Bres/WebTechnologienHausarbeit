@@ -6,22 +6,21 @@ from pathlib import Path
 from flask_migrate import Migrate
 from .database.models import Player
 from datetime import timedelta
-from .database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 from .database import db
 from .socketio.lobby import GameLobbyNamespace
 from .sites.base import site as base_site
 
-
-def remove_inactive_players_periodically(app: Flask):
-    """Periodicly runs to remove the inactive Players
-    """
-    with app.app_context():
-        timeout_remove = timedelta(minutes=15)
-        timeout_leave = timedelta(seconds=20)
-        remove_inactive_players(timeout_remove)
-        remove_inactive_players_from_game(timeout_leave)
+# from .database.interaction.game import remove_inactive_players, remove_inactive_players_from_game
+# def remove_inactive_players_periodically(app: Flask):
+#    """Periodicly runs to remove the inactive Players
+#    """
+#    with app.app_context():
+#        timeout_remove = timedelta(minutes=15)
+#        timeout_leave = timedelta(seconds=20)
+#        remove_inactive_players(timeout_remove)
+#        remove_inactive_players_from_game(timeout_leave)
 
 
 def create_app() -> Flask:
