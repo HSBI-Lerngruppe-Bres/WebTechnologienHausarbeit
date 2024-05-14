@@ -235,6 +235,26 @@ def remove_empty_game(game_id: int):
         remove_game(game_id)
 
 
+def select_new_owner(game_id: int) -> bool:
+    """
+    Selects a new owner for the game from the remaining players.
+
+    Args:
+        game_id (int): The ID of the game.
+
+    Returns:
+        bool: True if a new owner was successfully selected, False otherwise.
+    """
+    remaining_players = Player.query.filter_by(
+        game_id=game_id).order_by(Player.last_active).all()
+    if remaining_players:
+        new_owner = remaining_players[0]
+        new_owner.is_game_owner = True
+        db.session.commit()
+        return True
+    return False
+
+
 def remove_player(player_id: int) -> bool:
     """
     Removes a player and all associated data from the database.
@@ -253,6 +273,8 @@ def remove_player(player_id: int) -> bool:
         db.session.delete(player)
         db.session.commit()
         remove_empty_game(player.game_id)
+        if check_owner(player.game_id, player):
+            select_new_owner(player.game_id)
         return True
     except Exception as e:
         db.session.rollback()
