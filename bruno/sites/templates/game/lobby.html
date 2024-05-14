@@ -30,8 +30,34 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Settings</h3>
-                    <div>Nothing here yet</div>
-                    <!-- Game settings form stuff-->
+                    <!-- Starting Card Amount -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Starting Card Amount</span>
+                        <input type="number" class="form-control" id="starting_card_amount" value="7" min="1" max="20" onchange="updateSettings()">
+                    </div>
+                    <!-- Black Card Finish Checkbox -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" id="black_card_finish" onchange="updateSettings()">
+                        </div>
+                        <span class="form-control">Allow Black Card Finish</span>
+                    </div>
+
+                    <!-- Black on Black Card Checkbox -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" id="black_on_black" onchange="updateSettings()">
+                        </div>
+                        <span class="form-control">Allow Black on Black Card</span>
+                    </div>
+
+                    <!-- +2 Stacking Checkbox -->
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" id="plus_two_stacking" onchange="updateSettings()">
+                        </div>
+                        <span class="form-control">Allow +2 Stacking</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,6 +87,27 @@
         playersList.innerHTML = 'No players yet.';
     }
     });
+
+
+    socket.on('update_settings', function(data) {
+        console.log(data.settings);
+        if (data.settings) {
+            document.getElementById('starting_card_amount').value = data.settings.starting_card_amount;
+            document.getElementById('black_card_finish').checked = data.settings.black_card_finish === true;
+            document.getElementById('black_on_black').checked = data.settings.black_on_black === true;
+            document.getElementById('plus_two_stacking').checked = data.settings.plus_two_stacking === true;
+        }
+    });
+
+    function updateSettings() {
+        var settingsData = {
+            starting_card_amount: document.getElementById('starting_card_amount').value,
+            black_card_finish: document.getElementById('black_card_finish').checked,
+            black_on_black: document.getElementById('black_on_black').checked,
+            plus_two_stacking: document.getElementById('plus_two_stacking').checked
+        };
+        socket.emit('update_settings', {hashed_game_id: '{{ hashed_game_id }}', settings: settingsData});
+    }
     </script>
     <script>
     function copyInviteLink() {

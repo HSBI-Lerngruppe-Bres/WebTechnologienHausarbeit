@@ -122,7 +122,7 @@ def remove_player(player_id: int) -> bool:
         player = Player.query.get(player_id)
         if not player:
             print("Player not found.")
-            return False        
+            return False
         db.session.delete(player)
         db.session.commit()
         return True
@@ -130,3 +130,51 @@ def remove_player(player_id: int) -> bool:
         db.session.rollback()
         print(f"An error occurred while removing the player: {e}")
         return False
+
+
+def update_settings(game_id: int, settings: dict):
+    """
+    Update game settings based on provided settings dictionary.
+
+    Args:
+        game_id (int): The ID of the game to update.
+        settings (dict): A dictionary containing setting keys and their new values.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False, "Game not found"
+
+    game.settings_starting_card_amount = settings.get(
+        'starting_card_amount', game.settings_starting_card_amount)
+    game.settings_black_card_finish = settings.get(
+        'black_card_finish', game.settings_black_card_finish)
+    game.settings_black_on_black = settings.get(
+        'black_on_black', game.settings_black_on_black)
+    game.settings_plus_two_stacking = settings.get(
+        'plus_two_stacking', game.settings_plus_two_stacking)
+
+    db.session.commit()
+    return True, "Settings updated successfully"
+
+
+def get_settings_by_game_id(game_id: int):
+    """
+    Retrieve settings for a specific game by game ID.
+
+    Args:
+        game_id (int): The ID of the game whose settings are to be retrieved.
+
+    Returns:
+        dict: A dictionary of settings if the game exists, otherwise None.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return None
+
+    settings = {
+        "starting_card_amount": game.settings_starting_card_amount,
+        "black_card_finish": game.settings_black_card_finish,
+        "black_on_black": game.settings_black_on_black,
+        "plus_two_stacking": game.settings_plus_two_stacking
+    }
+    return settings
