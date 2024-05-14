@@ -70,7 +70,7 @@ def create_games(game_name: str, public: bool, password: str, owner: Player) -> 
         return None
 
 
-def create_player(name: str) -> Optional[Player]:
+def create_player_database(name: str) -> Optional[Player]:
     """Adds a new player to the database
 
     Args:

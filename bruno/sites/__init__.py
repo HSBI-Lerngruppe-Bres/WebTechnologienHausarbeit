@@ -1,4 +1,4 @@
-from bruno.database.interaction import check_player_in_game, get_players_by_game_id, game_has_password, check_game, check_game_password, get_active_games, create_games, create_player, check_owner
+from bruno.database.interaction import check_player_in_game, game_has_password, check_game, check_game_password, get_active_games, create_games, create_player_database, check_owner
 from flask_login import login_required
 from flask import Blueprint, render_template, current_app
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
@@ -48,7 +48,7 @@ def create_player():
     create_player_form = CreatePlayerForm(prefix='create_player')
     player = None
     if request.form and create_player_form.validate_on_submit():
-        player = create_player(create_player_form.name.data)
+        player = create_player_database(create_player_form.name.data)
     if player:
         login_user(player)
         next = request.args.get('next')
