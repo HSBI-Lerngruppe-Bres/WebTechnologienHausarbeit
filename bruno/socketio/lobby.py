@@ -1,8 +1,21 @@
 from flask_socketio import join_room, leave_room, emit, Namespace
 from flask_login import current_user, logout_user
+from functools import wraps
 from flask import current_app
 from hashids import Hashids
 from bruno.database.interaction.game import get_players_by_game_id, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id
+
+
+def authenticated_only(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        if not current_user.is_authenticated:
+            emit('authentication_failed', {
+                 'message': 'User not authenticated'}, namespace='/lobby')
+            # disconnect()
+            return
+        return f(*args, **kwargs)
+    return wrapped
 
 
 class GameLobbyNamespace(Namespace):
@@ -38,6 +51,7 @@ class GameLobbyNamespace(Namespace):
             return False
         return True
 
+    @authenticated_only
     def on_join(self, data):
         """Handles player joining a game."""
         hashed_game_id = data['hashed_game_id']
@@ -50,6 +64,7 @@ class GameLobbyNamespace(Namespace):
         self.send_update_player(game_id, hashed_game_id)
         self.send_update_settings(game_id, hashed_game_id)
 
+    @authenticated_only
     def on_disconnect(self):
         """Handles player disconnection."""
         game_id = get_game_id_by_player_id(current_user.id)
@@ -61,6 +76,7 @@ class GameLobbyNamespace(Namespace):
             leave_room(hashed_game_id)
         logout_user()
 
+    @authenticated_only
     def on_update_settings(self, data):
         """Handles the settings update event
         """
@@ -72,6 +88,7 @@ class GameLobbyNamespace(Namespace):
             update_settings(game_id, data["settings"])
         self.send_update_settings(game_id, hashed_game_id)
 
+    @authenticated_only
     def on_start_game(self, data):
         """When a player starts the game
         """

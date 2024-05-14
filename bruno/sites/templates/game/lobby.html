@@ -110,13 +110,18 @@
             return
         }
         console.log("Game is starting...");
-        document.body.innerHTML = '<h1>Game is loading!</h1>';
+        document.body.innerHTML = '<h1>Game is loading ...</h1>';
         fetch("{{ url_for('sites.game.game', hashed_game_id=hashed_game_id, _external=True) }}")
         .then(response => response.text())
         .then(html => {
             document.body.innerHTML = html;
         })
         .catch(error => console.error('Error loading the game interface:', error));
+    });
+
+    socket.on('authentication_failed', function(data) {
+        alert(data.message);
+        window.location.href = '{{url_for('sites.index')}}';
     });
 
     function updateSettings() {
