@@ -76,7 +76,6 @@ def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)[0]
     # TODO check for not valid game id
-    # TODO redirect if no game
     # TODO check if player in game
     if game_has_password(game_id) and not check_owner(game_id, current_user):
         game_password_form = GamePasswordForm()
