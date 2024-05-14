@@ -61,8 +61,6 @@ def create_games(game_name: str, public: bool, password: str, owner: Player) -> 
             password_hash=generate_password_hash(
                 password) if password else None
         )
-        owner.is_game_owner = True
-        owner.game_id = new_game.id
         db.session.add(new_game)
         db.session.commit()
         return new_game
@@ -132,8 +130,13 @@ def player_join_game(player_id: int, game_id: int) -> bool:
         if player.game_id == game.id:
             print("Player is already in this game.")
             return False
+
         player.game_id = game.id
-        player.is_game_owner = False
+        players_in_game = get_players_by_game_id(game_id)
+        if len(players_in_game) <= 1:
+            player.is_game_owner = True
+        else:
+            player.is_game_owner = False
         db.session.commit()
         return True
     except Exception as e:
@@ -248,8 +251,10 @@ def select_new_owner(game_id: int) -> bool:
     remaining_players = Player.query.filter_by(
         game_id=game_id).order_by(Player.last_active).all()
     if remaining_players:
+        print("new", new_owner.game_id, new_owner.is_game_owner)
         new_owner = remaining_players[0]
         new_owner.is_game_owner = True
+        print("new", new_owner.game_id, new_owner.is_game_owner)
         db.session.commit()
         return True
     return False
