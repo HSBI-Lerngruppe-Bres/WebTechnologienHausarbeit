@@ -61,14 +61,6 @@
         playersList.innerHTML = 'No players yet.';
     }
     });
-
-    socket.on('player_left', function(data) {
-        console.log(data.message);
-    });
-
-    function leaveGame() {
-        socket.emit('leave', {hashed_game_id: '{{ hashed_game_id }}'});
-    }
     </script>
     <script>
     function copyInviteLink() {
