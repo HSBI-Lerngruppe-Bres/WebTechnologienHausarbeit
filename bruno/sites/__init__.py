@@ -1,17 +1,14 @@
+from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game_password, get_active_games, create_games, create_player
+from flask_login import login_required
+from flask import Blueprint, render_template, current_app
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
-from .game import site as game_site
 from flask_login.utils import login_required, current_user
-from bruno.database.interaction.base import get_active_games, create_games, create_player
-from bruno.forms.base import CreateGameForm, JoinGameForm, CreatePlayerForm
+from bruno.forms import CreateGameForm, JoinGameForm, CreatePlayerForm, GamePasswordForm
 from hashids import Hashids
-from bruno.api import api
 from flask_login import logout_user, login_user
 
 site = Blueprint("sites", __name__,
                  template_folder="templates", url_prefix="/")
-
-site.register_blueprint(game_site)
-site.register_blueprint(api)
 
 
 @site.get("/")
@@ -32,10 +29,10 @@ def games():
                             current_user)
         hashids = Hashids(salt=current_app.config.get(
             "SECRET_KEY"), min_length=5)
-        return redirect(url_for('sites.game.join', hashed_game_id=hashids.encode(game.id)))
-
+        if game:
+            return redirect(url_for('sites.join', hashed_game_id=hashids.encode(game.id)))
     elif 'join_game_submit' in request.form and join_game_form.validate_on_submit():
-        return redirect(url_for('sites.game.join', hashed_game_id=join_game_form.hashed_game_id.data))
+        return redirect(url_for('sites.join', hashed_game_id=join_game_form.hashed_game_id.data))
 
     return render_template("games.html", games=games, create_game_form=create_game_form, join_game_form=join_game_form)
 
@@ -71,3 +68,29 @@ def logout():
     logout_user()
     flash("You have been logged out.", "info")
     return redirect(url_for('sites.index'))
+
+
+@site.route('/join/<string:hashed_game_id>', methods=['GET', 'POST'])
+@login_required
+def join(hashed_game_id):
+    hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
+    game_id = hashids.decode(hashed_game_id)[0]
+    # TODO check for not valid game id
+    # TODO check if user is owner then no password
+    # TODO redirect if no game
+    # TODO check if player in game
+    if game_has_password(game_id):
+        game_password_form = GamePasswordForm()
+        if not (game_password_form.validate_on_submit() and check_game_password(game_id, game_password_form.password.data)):
+            return render_template("password.html", hashed_game_id=hashed_game_id, game_password_form=game_password_form)
+    players = get_players_by_game_id(game_id)
+    return render_template("lobby.html", hashed_game_id=hashed_game_id)
+
+
+@site.route('/game/<string:hashed_game_id>', methods=['GET', 'POST'])
+@login_required
+def game(hashed_game_id):
+    hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
+    game_id = hashids.decode(hashed_game_id)[0]
+    # TODO check if player in game
+    return render_template("game.html", hashed_game_id=hashed_game_id)

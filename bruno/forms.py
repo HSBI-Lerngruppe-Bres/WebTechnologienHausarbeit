@@ -33,3 +33,11 @@ class CreatePlayerForm(FlaskForm):
     name = StringField('Player Name', validators=[
         DataRequired(), Length(min=4, max=20)])
     submit = SubmitField('Login')
+
+
+class GamePasswordForm(FlaskForm):
+    """The create player form
+    """
+    password = StringField('Password', validators=[
+        DataRequired(), Length(min=1, message="Password must be at least 1 character long.")])
+    submit = SubmitField('Login')
