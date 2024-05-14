@@ -11,13 +11,13 @@ def authenticated_only(f):
     def wrapped(*args, **kwargs):
         if not current_user.is_authenticated:
             emit('kick', {
-                 'message': 'User not authenticated'}, namespace='/lobby')
+                 'message': 'User not authenticated'}, namespace='/game')
             return
         return f(*args, **kwargs)
     return wrapped
 
 
-class GameLobbyNamespace(Namespace):
+class GameNamespace(Namespace):
     @staticmethod
     def send_update_player(game_id: int, hashed_game_id: str):
         """Emits an update for all players

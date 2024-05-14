@@ -5,14 +5,14 @@ from flask_login import LoginManager
 from pathlib import Path
 from flask_migrate import Migrate
 from .database.models import Player
-from datetime import timedelta
-from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 from .database import db
-from .socketio import GameLobbyNamespace
+from .socketio import GameNamespace
 from .sites import site as base_site
 
 # from .database.interaction import remove_inactive_players, remove_inactive_players_from_game
+# from datetime import timedelta
+# from flask_apscheduler import APScheduler
 # def remove_inactive_players_periodically(app: Flask):
 #    """Periodicly runs to remove the inactive Players
 #    """
@@ -85,5 +85,5 @@ def create_socketio(app: Flask) -> SocketIO:
     logging.debug(f"Setup Flask-SocketIO")
     socketio = SocketIO()
     socketio.init_app(app)
-    socketio.on_namespace(GameLobbyNamespace('/lobby'))
+    socketio.on_namespace(GameNamespace('/game'))
     return socketio

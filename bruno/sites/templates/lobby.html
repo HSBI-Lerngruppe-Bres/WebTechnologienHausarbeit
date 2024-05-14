@@ -73,7 +73,7 @@
 {% block script %}
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
-    var socket = io('/lobby');
+    var socket = io('/game');
 
     socket.on('connect', function() {
         socket.emit('join', {hashed_game_id: '{{ hashed_game_id }}'});
