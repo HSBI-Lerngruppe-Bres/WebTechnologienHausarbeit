@@ -9,7 +9,7 @@ from datetime import timedelta
 from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 from .database import db
-from .socketio.lobby import GameLobbyNamespace
+from .socketio import GameLobbyNamespace
 from .sites import site as base_site
 
 # from .database.interaction import remove_inactive_players, remove_inactive_players_from_game
