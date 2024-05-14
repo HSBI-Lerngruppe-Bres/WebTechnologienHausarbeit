@@ -1,4 +1,4 @@
-from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game_password, get_active_games, create_games, create_player, check_owner
+from bruno.database.interaction import get_players_by_game_id, game_has_password, check_game, check_game_password, get_active_games, create_games, create_player, check_owner
 from flask_login import login_required
 from flask import Blueprint, render_template, current_app
 from flask import Blueprint, render_template, redirect, url_for, current_app, request, flash
@@ -45,7 +45,6 @@ def choose_name():
     Returns:
         HTTPResponse: Either the side the player wants to be redirected to or the login and register form
     """
-    # TODO redirect after logged in
     create_player_form = CreatePlayerForm(prefix='create_player')
     player = None
     if request.form and create_player_form.validate_on_submit():
@@ -74,8 +73,10 @@ def logout():
 @login_required
 def join(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
-    game_id = hashids.decode(hashed_game_id)[0]
-    # TODO check for not valid game id
+    game_id = hashids.decode(hashed_game_id)[0] if hashids.decode(
+        hashed_game_id) is not None else None
+    if not game_id or check_game(game_id):
+        return redirect(url_for("sites.index"))
     # TODO check if player in game
     if game_has_password(game_id) and not check_owner(game_id, current_user):
         game_password_form = GamePasswordForm()
@@ -89,6 +90,9 @@ def join(hashed_game_id):
 @login_required
 def game(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
-    game_id = hashids.decode(hashed_game_id)[0]
+    game_id = hashids.decode(hashed_game_id)[0]if hashids.decode(
+        hashed_game_id) is not None else None
+    if not game_id or check_game(game_id):
+        return redirect(url_for("sites.index"))
     # TODO check if player in game
     return render_template("game.html", hashed_game_id=hashed_game_id)

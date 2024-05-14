@@ -420,3 +420,17 @@ def check_owner(game_id: int, player: Player) -> bool:
     if player and player.game_id == game_id and player.is_game_owner:
         return True
     return False
+
+
+def check_game(game_id: int) -> bool:
+    """
+    Checks if the game exists.
+
+    Args:
+        game_id (int): The ID of the game to check.
+
+    Returns:
+        bool: True if the game exists, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    return game is not None
