@@ -70,6 +70,7 @@ class GameLobbyNamespace(Namespace):
         """When a player starts the game
         """
         print("STarting", data)
+        # TODO check if player permittet (OWNER)
         # TODO Check player count
         hashed_game_id = data['hashed_game_id']
         emit("start_game", {"start": True}, room=hashed_game_id)
