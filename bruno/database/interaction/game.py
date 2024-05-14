@@ -1,6 +1,6 @@
 from typing import List
 from ..models import Game, Player, db
-from datetime import datetime, timezone, timedelta
+from werkzeug.security import check_password_hash
 
 
 def get_players_by_game_id(game_id: int) -> List[Player]:
@@ -61,7 +61,7 @@ def get_game_id_by_player_id(player_id: int) -> int:
         return player.game_id
     return None
 
-#
+# from datetime import datetime, timezone, timedelta
 # def update_player_activity(player_id: int):
 #    """Resets the players activity to the current
 #
@@ -251,3 +251,33 @@ def start_game(game_id: int) -> bool:
         db.session.rollback()
         print(f"Failed to start game {game_id}: {e}")
         return False
+
+
+def game_has_password(game_id: int) -> bool:
+    """Checks if the game has a password
+
+    Args:
+        game_id (int): The game id of the game
+
+    Returns:
+        bool: If the game has a password
+    """
+    game = Game.query.get(game_id)
+    return not game.password_hash is None
+
+
+def check_game_password(game_id: int, password: str) -> bool:
+    """
+    Checks if the provided password matches the hashed password of the game.
+
+    Args:
+        game_id (int): The ID of the game.
+        password (str): The password to check.
+
+    Returns:
+        bool: True if the password is correct, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    if game and game.password_hash:
+        return check_password_hash(game.password_hash, password)
+    return False
