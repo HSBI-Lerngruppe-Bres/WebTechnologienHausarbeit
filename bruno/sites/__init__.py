@@ -37,8 +37,8 @@ def games():
     return render_template("games.html", games=games, create_game_form=create_game_form, join_game_form=join_game_form)
 
 
-@site.route('/choose_name', methods=['GET', 'POST'])
-def choose_name():
+@site.route('/create_player', methods=['GET', 'POST'])
+def create_player():
     """The login and register handler for post and get request. Using
        WTForms to validate the players input. login or register the player
 
@@ -76,6 +76,7 @@ def join(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
         hashed_game_id)) > 0 else None
     if not game_id or not check_game(game_id) or check_player_in_game(current_user):
+        flash("The game does not exist or u are already in a game.")
         return redirect(url_for("sites.index"))
     if game_has_password(game_id) and not check_owner(game_id, current_user):
         game_password_form = GamePasswordForm()
@@ -91,6 +92,7 @@ def game(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
         hashed_game_id)) > 0 else None
     if not game_id or not check_game(game_id) or check_player_in_game(current_user):
+        flash("The game does not exist or u are already in a game.")
         return redirect(url_for("sites.index"))
     check_player_in_game(game_id, current_user)
     return render_template("game.html", hashed_game_id=hashed_game_id)

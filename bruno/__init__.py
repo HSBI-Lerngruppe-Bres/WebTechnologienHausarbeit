@@ -57,7 +57,8 @@ def create_app() -> Flask:
     logging.debug(f"Setup Flask-Login")
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'sites.choose_name'
+    login_manager.login_message = ""
+    login_manager.login_view = 'sites.create_player'
 
     @login_manager.user_loader
     def user_loader(player_id):
