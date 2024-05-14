@@ -104,6 +104,21 @@
         }
     });
 
+    socket.on('start_game', function(data) {
+        if (!data.start) {
+            return
+        }
+        console.log("Game is starting...");
+        document.body.innerHTML = '<h1>Game is loading!</h1>';
+        fetch("{{ url_for('sites.game.game', hashed_game_id=hashed_game_id, _external=True) }}")
+        .then(response => response.text())
+        .then(html => {
+            document.body.innerHTML = html;
+        })
+        .catch(error => console.error('Error loading the game interface:', error));
+    });
+
+
     function updateSettings() {
         var settingsData = {
             starting_card_amount: document.getElementById('starting_card_amount').value,
@@ -113,6 +128,12 @@
         };
         socket.emit('update_settings', {hashed_game_id: '{{ hashed_game_id }}', settings: settingsData});
     }
+
+    function startGame() {
+        socket.emit('start_game', {hashed_game_id: '{{ hashed_game_id }}'});
+        document.getElementById('startGameButton').disabled = true;
+    }
+
     </script>
     <script>
     function copyInviteLink() {

@@ -65,3 +65,11 @@ class GameLobbyNamespace(Namespace):
         update_settings(game_id, data["settings"])
         # TODO CHeck if numbers inbounds
         self.send_update_settings(game_id, hashed_game_id)
+
+    def on_start_game(self, data):
+        """When a player starts the game
+        """
+        print("STarting", data)
+        # TODO Check player count
+        hashed_game_id = data['hashed_game_id']
+        emit("start_game", {"start": True}, room=hashed_game_id)
