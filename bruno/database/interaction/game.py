@@ -119,6 +119,7 @@ def remove_player(player_id: int) -> bool:
         bool: True if the removal was successful, False otherwise.
     """
     try:
+        # TODO if last Player remove Game
         player = Player.query.get(player_id)
         if not player:
             print("Player not found.")
