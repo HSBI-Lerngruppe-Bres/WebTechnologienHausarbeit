@@ -90,7 +90,6 @@
 
 
     socket.on('update_settings', function(data) {
-        console.log(data.settings);
         if (data.settings) {
             document.getElementById('starting_card_amount').value = data.settings.starting_card_amount;
             document.getElementById('black_card_finish').checked = data.settings.black_card_finish === true;

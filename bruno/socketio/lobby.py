@@ -37,11 +37,12 @@ class GameLobbyNamespace(Namespace):
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         # TODO Check if allowed
-        # TODO Check if already in game
+        # TODO Check if already in game SMEWHAT DONE
         game_id = hashids.decode(hashed_game_id)[0]
         join_room(hashed_game_id)
         player_join_game(current_user.id, game_id)
         self.send_update_player(game_id, hashed_game_id)
+        self.send_update_settings(game_id, hashed_game_id)
 
     def on_disconnect(self):
         """Handles player disconnection."""
