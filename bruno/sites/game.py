@@ -27,6 +27,4 @@ def game(hashed_game_id):
     game_id = hashids.decode(hashed_game_id)[0]
     # TODO check if player in game
     # TODO check if game started
-    # Logic to add the current player to the game's players
-    # Redirect to the game page or display some confirmation message
     return render_template("game.html", hashed_game_id=hashed_game_id)

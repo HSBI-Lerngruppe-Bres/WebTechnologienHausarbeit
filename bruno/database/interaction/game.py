@@ -61,51 +61,82 @@ def get_game_id_by_player_id(player_id: int) -> int:
         return player.game_id
     return None
 
+#
+# def update_player_activity(player_id: int):
+#    """Resets the players activity to the current
+#
+#    Args:
+#        player_id (int): The id of the player
+#    """
+#    player = Player.query.filter_by(id=player_id).first()
+#    if player:
+#        player.last_active = datetime.now(timezone.utc)
+#    else:
+#        player = Player(id=player_id)
+#        db.session.add(player)
+#    db.session.commit()
+#
+#
+# def remove_inactive_players(timeout: timedelta):
+#    """Removes all inactive or disconnected players
+#
+#    Args:
+#        timeout (timedelta): The timeout duration
+#    """
+#    timeout_threshold = datetime.now(timezone.utc) - timeout
+#    inactive_players = Player.query.filter(
+#        Player.last_active < timeout_threshold).all()
+#    for player in inactive_players:
+#        db.session.delete(player)
+#    db.session.commit()
+#
+#
+# def remove_inactive_players_from_game(timeout: timedelta):
+#    """
+#    Removes players from games who have been inactive longer than the specified timeout.
+#
+#    Args:
+#        timeout (timedelta): The duration of time after which players are considered inactive.
+#    """
+#    now = datetime.now(timezone.utc)
+#    timeout_threshold = now - timeout
+#    inactive_players = Player.query.filter(
+#        Player.last_active < timeout_threshold).all()
+#    for player in inactive_players:
+#        for game in player.games:
+#            game.players.remove(player)
+#        db.session.commit()
+#
 
-def update_player_activity(player_id: int):
-    """Resets the players activity to the current
+
+def remove_game(game_id: int):
+    """Removes a specific game
 
     Args:
-        player_id (int): The id of the player
+        game_id (int): The game to be removed
     """
-    player = Player.query.filter_by(id=player_id).first()
-    if player:
-        player.last_active = datetime.now(timezone.utc)
-    else:
-        player = Player(id=player_id)
-        db.session.add(player)
-    db.session.commit()
-
-
-def remove_inactive_players(timeout: timedelta):
-    """Removes all inactive or disconnected players
-
-    Args:
-        timeout (timedelta): The timeout duration
-    """
-    timeout_threshold = datetime.now(timezone.utc) - timeout
-    inactive_players = Player.query.filter(
-        Player.last_active < timeout_threshold).all()
-    for player in inactive_players:
-        db.session.delete(player)
-    db.session.commit()
-
-
-def remove_inactive_players_from_game(timeout: timedelta):
-    """
-    Removes players from games who have been inactive longer than the specified timeout.
-
-    Args:
-        timeout (timedelta): The duration of time after which players are considered inactive.
-    """
-    now = datetime.now(timezone.utc)
-    timeout_threshold = now - timeout
-    inactive_players = Player.query.filter(
-        Player.last_active < timeout_threshold).all()
-    for player in inactive_players:
-        for game in player.games:
-            game.players.remove(player)
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            print("Player not found.")
+            return False
+        db.session.delete(game)
         db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing the player: {e}")
+        return False
+
+
+def remove_empty_game(game_id: int):
+    """Removes the game if there are no players in it
+
+    Args:
+        game_id (int): The game to test
+    """
+    if len(get_players_by_game_id(game_id)) <= 0:
+        remove_game(game_id)
 
 
 def remove_player(player_id: int) -> bool:
@@ -119,13 +150,13 @@ def remove_player(player_id: int) -> bool:
         bool: True if the removal was successful, False otherwise.
     """
     try:
-        # TODO if last Player remove Game
         player = Player.query.get(player_id)
         if not player:
             print("Player not found.")
             return False
         db.session.delete(player)
         db.session.commit()
+        remove_empty_game(player.game_id)
         return True
     except Exception as e:
         db.session.rollback()
