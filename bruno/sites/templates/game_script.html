@@ -85,12 +85,28 @@
     socket.on('update_cards', function(data) {
         if (in_game) {
             console.log('Cards data:', data.cards);
+            var cardCountsList = document.getElementById('card-counts');
+            cardCountsList.innerHTML = '';
+            for (var player in data.cards) {
+                var cardCountItem = document.createElement('div');
+                cardCountItem.className = 'card-count-item';
+                cardCountItem.innerHTML = `Player: ${player}, Cards: ${data.cards[player]}`;
+                cardCountsList.appendChild(cardCountItem);
+            }
         }
     });
 
     socket.on('move_done', function(data) {
         if (in_game) {
             console.log('Move done, cards:', data.cards);
+            var cardsList = document.getElementById('cards');
+            cardsList.innerHTML = '';
+            data.cards.forEach(function(card) {
+                var cardItem = document.createElement('div');
+                cardItem.className = 'card-item';
+                cardItem.innerHTML = `ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}`;
+                cardsList.appendChild(cardItem);
+            });
         }
     });
 
