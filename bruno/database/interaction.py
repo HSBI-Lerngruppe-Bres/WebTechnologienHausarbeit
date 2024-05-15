@@ -554,7 +554,7 @@ def card_amounts_in_game(game_id: int):
     return card_amounts
 
 
-def get_cards_by_player(player: Player):
+def get_cards_by_player(player):
     """
     Get all cards for a given player.
 
@@ -562,6 +562,6 @@ def get_cards_by_player(player: Player):
         player (Player): The player.
 
     Returns:
-        List[Card]: A list of Card objects.
+        list: A list of dictionaries representing the cards.
     """
-    return player.cards
+    return [{'id': card.id, 'color': card.color, 'value': card.value, 'type': card.type} for card in player.cards]
