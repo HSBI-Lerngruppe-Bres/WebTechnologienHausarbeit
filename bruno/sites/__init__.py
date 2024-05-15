@@ -94,5 +94,7 @@ def game(hashed_game_id):
     if not game_id or not check_game(game_id):
         flash("The game does not exist or u are already in a game.")
         return redirect(url_for("sites.index"))
-    check_player_in_game(game_id, current_user)
+    if not check_player_in_game(current_user):
+        flash("You havent joined a game.")
+        return redirect(url_for("sites.index"))
     return render_template("game.html", hashed_game_id=hashed_game_id)

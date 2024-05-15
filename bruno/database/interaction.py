@@ -1,3 +1,6 @@
+import random
+from .models import Player, Card
+from . import db
 from .models import Game, Player, db
 from werkzeug.security import check_password_hash
 from bruno.database.models import Game
@@ -447,3 +450,84 @@ def check_player_in_game(player: Player) -> bool:
         bool: If the player is in the game
     """
     return not player.game_id is None
+
+
+def select_random_card() -> Card:
+    """
+    Select a random card based on its frequency.
+
+    Returns:
+        Card: The selected card object.
+    """
+    available_cards = Card.query.all()
+    if not available_cards:
+        print("No available cards to select.")
+        return None
+    card_pool = []
+    for card in available_cards:
+        card_pool.extend([card] * card.frequency)
+    if not card_pool:
+        print("Card pool is empty.")
+        return None
+
+    return random.choice(card_pool)
+
+
+def draw_cards(player: Player, amount: int) -> bool:
+    """
+    Draw a specified number of cards for a player.
+
+    Args:
+        player (Player): The player who will draw the cards.
+        amount (int): The number of cards to draw.
+
+    Returns:
+        bool: True if cards were successfully drawn, False otherwise.
+    """
+    try:
+        drawn_cards = []
+        for _ in range(amount):
+            card = select_random_card()
+            if card:
+                drawn_cards.append(card)
+            else:
+                print("Failed to draw enough cards.")
+                return False
+        for card in drawn_cards:
+            player.cards.append(card)
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while drawing cards: {e}")
+        return False
+
+
+def select_start_card(game_id: int) -> bool:
+    """
+    Select a starting card for a game.
+
+    Args:
+        game_id (int): The ID of the game for which to select the starting card.
+
+    Returns:
+        bool: True if a starting card was successfully selected, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            print("Game not found.")
+            return False
+
+        start_card = select_random_card()
+        if start_card:
+            game.last_card = start_card
+            db.session.commit()
+            return True
+        else:
+            print("Failed to select a starting card.")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while selecting the start card: {e}")
+        return False

@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -98,7 +98,12 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME") or not check_owner(game_id, current_user):
-            emit("start_game", {"start": False, "message": "There are not enogth players."}, room=hashed_game_id)
+            emit("start_game", {
+                 "start": False, "message": "There are not enogth players."}, room=hashed_game_id)
             return
         start_game(game_id)
+        for player in get_players_by_game_id(game_id):
+            draw_cards(player, get_settings_by_game_id(
+                game_id)["starting_card_amount"])
+        select_start_card(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)

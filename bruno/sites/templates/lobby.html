@@ -107,7 +107,6 @@
     socket.on('start_game', function(data) {
         if (!data.start) {
             document.getElementById('startGameButton').disabled = false;
-            alert(data.message)
             return
         }
         console.log("Game is starting...");
