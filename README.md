@@ -8,12 +8,12 @@ UNO/Bruno is a web-based game application developed using Flask and SQLAlchemy i
 
 ## Technology Stack
 
-Programming Language: Python 3
-Web Framework: Flask
-Database Toolkit: SQLAlchemy
-Real-time Communication: Flask-SocketIO
-Frontend Technologies: HTML, CSS, JavaScript, Bootstrap
-Dependency Management: Poetry
+- Programming Language: `Python 3`
+- Web Framework: `Flask`
+- Database Toolkit: `SQLAlchemy`
+- Real-time Communication: `Flask-SocketIO`
+- Frontend Technologies: `HTML`, `CSS`, `JavaScript`, `Bootstrap`
+- Dependency Management: `Poetry`
 
 ## Installation
 
