@@ -9,6 +9,7 @@ from flask_socketio import SocketIO
 from .database import db
 from .socketio import GameNamespace
 from .sites import site as base_site
+from .commands import populate_cards_command
 
 # from .database.interaction import remove_inactive_players, remove_inactive_players_from_game
 # from datetime import timedelta
@@ -66,6 +67,9 @@ def create_app() -> Flask:
 
     logging.debug(f"Setup blueprints")
     app.register_blueprint(base_site)
+
+    logging.debug(f"Loading custom commands")
+    app.cli.add_command(populate_cards_command)
     # Setup removal of inactive players
     """logging.debug(f"Setup removal of inactive players")
     scheduler = APScheduler()

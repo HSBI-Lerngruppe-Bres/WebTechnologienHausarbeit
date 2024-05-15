@@ -34,3 +34,15 @@ class Game(db.Model):
 
     def __repr__(self):
         return f'Game(id={self.id}, name={self.name})'
+
+
+class Card(db.Model):
+    __tablename__ = 'card'
+    id = db.Column(db.Integer, primary_key=True)
+    color = db.Column(db.String(20), nullable=False)
+    value = db.Column(db.Integer, nullable=True)
+    type = db.Column(db.String(20), nullable=False)
+    frequency = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f'Card(id={self.id}, color={self.color}, value={self.value}, type={self.type})'
