@@ -94,6 +94,11 @@
                 cardCountItem.innerHTML = `Player: ${player}, Cards: ${data.cards[player]}`;
                 cardCountsList.appendChild(cardCountItem);
             }
+            if (data.last_card) {
+                var lastCardDiv = document.getElementById('last-card');
+                var lastCard = data.last_card;
+                lastCardDiv.innerHTML = `ID: ${data.last_card.id}, Color: ${data.last_card.color}, Value: ${data.last_card.value}, Type: ${data.last_card.type}`;
+            }
             if(data.pull_cards) {
                 socket.emit('request_cards', {hashed_game_id: '{{ hashed_game_id }}'});
             }

@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -27,9 +27,9 @@ class GameNamespace(Namespace):
             hashed_game_id (str): The hashed game id
         """
         players = get_players_by_game_id(game_id)
-        players_data = [{'name': player.name, 'id': player.id}
-                        for player in players]
-        emit('update_players', {'players': players_data},
+        players = [{'name': player.name, 'id': player.id}
+                   for player in players]
+        emit('update_players', {'players': players},
              room=hashed_game_id)
 
     @staticmethod
@@ -40,8 +40,8 @@ class GameNamespace(Namespace):
             game_id (int): The id of the game
             hashed_game_id (str): The hashed game id
         """
-        settings_data = get_settings_by_game_id(game_id)
-        emit('update_settings', {'settings': settings_data},
+        settings = get_settings_by_game_id(game_id)
+        emit('update_settings', {'settings': settings},
              room=hashed_game_id)
 
     @staticmethod
@@ -58,8 +58,9 @@ class GameNamespace(Namespace):
             game_id (int): The games id
             hashed_game_id (str): The hashed game id
         """
-        cards_data = card_amounts_in_game(game_id)
-        emit('update_cards', {'cards': cards_data, 'pull_cards': pull_cards},
+        cards = card_amounts_in_game(game_id)
+        last_card = get_last_card_by_game(game_id)
+        emit('update_cards', {'cards': cards, 'last_card': last_card, 'pull_cards': pull_cards},
              room=hashed_game_id)
 
     @authenticated_only

@@ -628,3 +628,20 @@ def check_card_playable(card_id: int, game_id) -> bool:
     """
     # TODO Logic
     return True
+
+
+def get_last_card_by_game(game_id: int) -> dict:
+    """Get the last card played in the game.
+
+    Args:
+        game_id (int): The id of the game.
+
+    Returns:
+        dict: A dictionary representing the last card.
+    """
+    game = Game.query.get(game_id)
+    last_card = game.last_card
+
+    if last_card:
+        return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type}
+    return {}
