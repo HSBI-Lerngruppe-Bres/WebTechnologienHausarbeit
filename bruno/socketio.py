@@ -51,7 +51,7 @@ class GameNamespace(Namespace):
         return True
 
     @staticmethod
-    def send_update_cards(game_id: int, hashed_game_id: str, pull_cards: False):
+    def send_update_cards(game_id: int, hashed_game_id: str, pull_cards=False):
         """Sends the card amount of all players in a game
 
         Args:
