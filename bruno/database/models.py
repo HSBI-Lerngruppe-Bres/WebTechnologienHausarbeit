@@ -12,6 +12,8 @@ class Player(db.Model, UserMixin):
     is_game_owner = db.Column(db.Boolean, default=False, nullable=False)
     last_active = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
+    cards = db.relationship(
+        'Card', secondary='player_cards', backref='players')
 
     def __repr__(self):
         return f'Player(id={self.id}, name={self.name})'
@@ -34,6 +36,14 @@ class Game(db.Model):
 
     def __repr__(self):
         return f'Game(id={self.id}, name={self.name})'
+
+
+player_cards = db.Table('player_cards',
+                        db.Column('player_id', db.Integer, db.ForeignKey(
+                            'player.id'), primary_key=True),
+                        db.Column('card_id', db.Integer, db.ForeignKey(
+                            'card.id'), primary_key=True)
+                        )
 
 
 class Card(db.Model):
