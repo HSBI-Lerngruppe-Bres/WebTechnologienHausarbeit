@@ -473,6 +473,55 @@ def select_random_card() -> Card:
     return random.choice(card_pool)
 
 
+def remove_all_cards(player: Player) -> bool:
+    """
+    Removes all cards from a player.
+
+    Args:
+    player (Player): The player object from whom all cards should be removed.
+
+    Returns:
+    bool: True if the operation was successful, False otherwise.
+    """
+    try:
+        player.cards.clear()
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing all cards from player {
+              player.id}: {e}")
+        return False
+
+
+def remove_card_from_player(player: Player, card_id: int) -> bool:
+    """
+    Removes a specific card from a player by card ID.
+
+    Args:
+    player (Player): The player object from whom the card should be removed.
+    card_id (int): The ID of the card to be removed.
+
+    Returns:
+    bool: True if the operation was successful, False otherwise.
+    """
+    try:
+        card_to_remove = next(
+            (card for card in player.cards if card.id == card_id), None)
+        if card_to_remove:
+            player.cards.remove(card_to_remove)
+            db.session.commit()
+            return True
+        else:
+            print(f"Card with ID {card_id} not found for player {player.id}")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing card {
+              card_id} from player {player.id}: {e}")
+        return False
+
+
 def draw_cards(player: Player, amount: int) -> bool:
     """
     Draw a specified number of cards for a player.

@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import get_cards_by_player, card_amounts_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import remove_all_cards, get_cards_by_player, card_amounts_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -49,6 +49,18 @@ class GameNamespace(Namespace):
         if int(settings.get("starting_card_amount")) > 20 or 2 > int(settings.get("starting_card_amount")):
             return False
         return True
+
+    @staticmethod
+    def send_update_cards(game_id: int, hashed_game_id: str):
+        """Sends the card amount of all players in a game
+
+        Args:
+            game_id (int): The games id
+            hashed_game_id (str): The hashed game id
+        """
+        cards_data = card_amounts_in_game(game_id)
+        emit('update_cards', {'cards': cards_data},
+             room=hashed_game_id)
 
     @authenticated_only
     def on_join(self, data):
@@ -102,27 +114,29 @@ class GameNamespace(Namespace):
             return
         start_game(game_id)
         for player in get_players_by_game_id(game_id):
+            remove_all_cards(player)
             draw_cards(player, get_settings_by_game_id(
                 game_id)["starting_card_amount"])
         select_start_card(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)
 
-    @staticmethod
-    def send_update_cards(game_id: int, hashed_game_id: str):
-        """Sends the card amount of all players in a game
-
-        Args:
-            game_id (int): The games id
-            hashed_game_id (str): The hashed game id
-        """
-        cards_data = card_amounts_in_game(game_id)
-        emit('update_cards', {'cards': cards_data},
-             room=hashed_game_id)
-
+    @authenticated_only
     def on_move(self, data):
         """When a users plays a move
         """
         # TODO move logic checks
+        hashed_game_id = data['hashed_game_id']
+        hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
+        game_id = hashids.decode(hashed_game_id)[0]
+        cards_data = get_cards_by_player(current_user)
+        emit("move_done", {"cards": cards_data}, namespace='/game')
+        self.send_update_cards(game_id, hashed_game_id)
+
+    @authenticated_only
+    def on_request_cards(self, data):
+        """When the client requests to receive its cards
+        """
+        # TODO some logic
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]

@@ -56,6 +56,7 @@
         .then(html => {
             document.body.innerHTML = html;
             in_game = true;
+            socket.emit('request_cards', {hashed_game_id: '{{ hashed_game_id }}'});
         })
         .catch(error => console.error('Error loading the game interface:', error));
     });
@@ -105,14 +106,22 @@
                 var cardItem = document.createElement('div');
                 cardItem.className = 'card-item';
                 cardItem.innerHTML = `ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}`;
+                var playButton = document.createElement('button');
+                playButton.innerHTML = 'Play';
+                playButton.className = 'play-button';
+
+                playButton.addEventListener('click', function() {
+                    makeMove('play_card', card.id);
+                });
+                cardItem.appendChild(playButton);
                 cardsList.appendChild(cardItem);
             });
         }
     });
 
-    function makeMove() {
+    function makeMove(action, card_id = null) {
         if (in_game) {
-            socket.emit('move', {hashed_game_id: '{{ hashed_game_id }}'});
+            socket.emit('move', {hashed_game_id: '{{ hashed_game_id }}', action: action, card_id: card_id});
         } else {
             console.log("Cannot make a move. The player is not in a game.");
         }
