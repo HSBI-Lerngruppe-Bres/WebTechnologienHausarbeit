@@ -70,7 +70,7 @@ def create_games(game_name: str, public: bool, password: str, owner: Player) -> 
         return None
 
 
-def create_player(name: str) -> Optional[Player]:
+def create_player_database(name: str) -> Optional[Player]:
     """Adds a new player to the database
 
     Args:
@@ -420,3 +420,30 @@ def check_owner(game_id: int, player: Player) -> bool:
     if player and player.game_id == game_id and player.is_game_owner:
         return True
     return False
+
+
+def check_game(game_id: int) -> bool:
+    """
+    Checks if the game exists.
+
+    Args:
+        game_id (int): The ID of the game to check.
+
+    Returns:
+        bool: True if the game exists, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    return game is not None
+
+
+def check_player_in_game(player: Player) -> bool:
+    """Check if the player is in a game
+
+    Args:
+        game_id (int): The game_id to check for
+        player (Player): The player that could be in the game
+
+    Returns:
+        bool: If the player is in the game
+    """
+    return not player.game_id is None

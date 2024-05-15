@@ -98,7 +98,7 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME") or not check_owner(game_id, current_user):
-            emit("start_game", {"start": False}, room=hashed_game_id)
+            emit("start_game", {"start": False, "message": "There are not enogth players."}, room=hashed_game_id)
             return
         start_game(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)
