@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import get_cards_by_player, card_amounts_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -59,7 +59,7 @@ class GameNamespace(Namespace):
         game_id = hashids.decode(hashed_game_id)[0]
         if not check_game_join(game_id):
             emit('kick', {'message': 'Game already started'},
-                 namespace='/lobby')
+                 namespace='/game')
             return
         join_room(hashed_game_id)
         player_join_game(current_user.id, game_id)
@@ -93,13 +93,12 @@ class GameNamespace(Namespace):
     def on_start_game(self, data):
         """When a player starts the game
         """
-        print("STarting", data)
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME") or not check_owner(game_id, current_user):
             emit("start_game", {
-                 "start": False, "message": "There are not enogth players."}, room=hashed_game_id)
+                 "start": False, "message": "There are not enogth players."}, namespace='/game')
             return
         start_game(game_id)
         for player in get_players_by_game_id(game_id):
@@ -107,3 +106,26 @@ class GameNamespace(Namespace):
                 game_id)["starting_card_amount"])
         select_start_card(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)
+
+    @staticmethod
+    def send_update_cards(game_id: int, hashed_game_id: str):
+        """Sends the card amount of all players in a game
+
+        Args:
+            game_id (int): The games id
+            hashed_game_id (str): The hashed game id
+        """
+        cards_data = card_amounts_in_game(game_id)
+        emit('update_cards', {'cards': cards_data},
+             room=hashed_game_id)
+
+    def on_move(self, data):
+        """When a users plays a move
+        """
+        # TODO move logic checks
+        hashed_game_id = data['hashed_game_id']
+        hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
+        game_id = hashids.decode(hashed_game_id)[0]
+        cards_data = get_cards_by_player(current_user)
+        emit("move_done", {"cards": cards_data}, namespace='/game')
+        self.send_update_cards(game_id, hashed_game_id)

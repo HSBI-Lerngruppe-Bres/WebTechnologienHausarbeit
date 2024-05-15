@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "game_script.html" %}
 
 {% block content %}
     <div class="row justify-content-center pt-3 g-3">
@@ -70,76 +70,7 @@
     </div>
 {% endblock %}
 
-{% block script %}
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script>
-    var socket = io('/game');
-
-    socket.on('connect', function() {
-        socket.emit('join', {hashed_game_id: '{{ hashed_game_id }}'});
-    });
-
-    socket.on('update_players', function(data) {
-        var playersList = document.getElementById('players');
-        if (data.players.length > 0) {
-            playersList.innerHTML = '';
-            data.players.forEach(function(player) {
-            var li = document.createElement('li');
-            li.appendChild(document.createTextNode(player.name));
-            li.className = 'list-group-item';
-            playersList.appendChild(li);
-        });
-    } else {
-        playersList.innerHTML = 'No players yet.';
-    }
-    });
-
-
-    socket.on('update_settings', function(data) {
-        if (data.settings) {
-            document.getElementById('starting_card_amount').value = data.settings.starting_card_amount;
-            document.getElementById('black_card_finish').checked = data.settings.black_card_finish === true;
-            document.getElementById('black_on_black').checked = data.settings.black_on_black === true;
-            document.getElementById('plus_two_stacking').checked = data.settings.plus_two_stacking === true;
-        }
-    });
-
-    socket.on('start_game', function(data) {
-        if (!data.start) {
-            document.getElementById('startGameButton').disabled = false;
-            return
-        }
-        console.log("Game is starting...");
-        document.body.innerHTML = '<h1>Game is loading ...</h1>';
-        fetch("{{ url_for('sites.game', hashed_game_id=hashed_game_id, _external=True) }}")
-        .then(response => response.text())
-        .then(html => {
-            document.body.innerHTML = html;
-        })
-        .catch(error => console.error('Error loading the game interface:', error));
-    });
-
-    socket.on('kick', function(data) {
-        alert(data.message);
-        window.location.href = '{{url_for('sites.index')}}';
-    });
-
-    function updateSettings() {
-        var settingsData = {
-            starting_card_amount: document.getElementById('starting_card_amount').value,
-            black_card_finish: document.getElementById('black_card_finish').checked,
-            black_on_black: document.getElementById('black_on_black').checked,
-            plus_two_stacking: document.getElementById('plus_two_stacking').checked
-        };
-        socket.emit('update_settings', {hashed_game_id: '{{ hashed_game_id }}', settings: settingsData});
-    }
-
-    function startGame() {
-        socket.emit('start_game', {hashed_game_id: '{{ hashed_game_id }}'});
-        document.getElementById('startGameButton').disabled = true;
-    }
-
-    </script>
+{% block single_page_script %}
     <script>
     function copyInviteLink() {
         /**

@@ -531,3 +531,37 @@ def select_start_card(game_id: int) -> bool:
         db.session.rollback()
         print(f"An error occurred while selecting the start card: {e}")
         return False
+
+
+def card_amounts_in_game(game_id: int):
+    """
+    Describe the card amounts of all players in a given game.
+
+    Args:
+        game_id (int): The ID of the game.
+
+    Returns:
+        Dict[str, int]: A dictionary with player names as keys and the count of their cards as values.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        print("Game not found.")
+        return {}
+
+    players = Player.query.filter_by(game_id=game_id).all()
+    card_amounts = {player.name: len(player.cards) for player in players}
+
+    return card_amounts
+
+
+def get_cards_by_player(player: Player):
+    """
+    Get all cards for a given player.
+
+    Args:
+        player (Player): The player.
+
+    Returns:
+        List[Card]: A list of Card objects.
+    """
+    return player.cards
