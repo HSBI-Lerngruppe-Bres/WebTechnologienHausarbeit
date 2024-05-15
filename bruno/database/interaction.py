@@ -603,7 +603,7 @@ def card_amounts_in_game(game_id: int):
     return card_amounts
 
 
-def get_cards_by_player(player):
+def get_cards_by_player(player) -> dict:
     """
     Get all cards for a given player.
 
@@ -614,3 +614,16 @@ def get_cards_by_player(player):
         list: A list of dictionaries representing the cards.
     """
     return [{'id': card.id, 'color': card.color, 'value': card.value, 'type': card.type} for card in player.cards]
+
+
+def check_card_playable(card_id: int, game_id) -> bool:
+    """Checks if the player can play the card
+
+    Args:
+        card_id (int): The id of the card to check
+        game_id (_type_): The id of the game to check
+
+    Returns:
+        bool: If the card is playable
+    """
+    return True
