@@ -626,4 +626,5 @@ def check_card_playable(card_id: int, game_id) -> bool:
     Returns:
         bool: If the card is playable
     """
+    # TODO Logic
     return True

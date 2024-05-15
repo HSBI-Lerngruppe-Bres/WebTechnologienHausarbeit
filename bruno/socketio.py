@@ -124,16 +124,19 @@ class GameNamespace(Namespace):
     def on_move(self, data):
         """When a users plays a move
         """
-        # TODO move logic checks
         hashed_game_id = data['hashed_game_id']
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         cards_data = get_cards_by_player(current_user)
         action = data['action']
         card_id = data['card_id']
+        # TODO check if player can move
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
+            print("1")
             remove_card_from_player(current_user, card_id)
-        emit("move_done", {"cards": cards_data}, namespace='/game')
+            # TODO CHECK FOR WIN
+        print(action, card_id, check_card_playable(card_id, game_id))
+        emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
     @authenticated_only
@@ -145,5 +148,5 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         cards_data = get_cards_by_player(current_user)
-        emit("move_done", {"cards": cards_data}, namespace='/game')
+        emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id)
