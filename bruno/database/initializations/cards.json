@@ -321,7 +321,7 @@
         {
             "color": "wild",
             "value": 4,
-            "type": "wild draw",
+            "type": "draw",
             "frequency": 4
         }
     ]
