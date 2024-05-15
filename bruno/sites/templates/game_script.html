@@ -94,6 +94,7 @@
                 cardCountItem.innerHTML = `Player: ${player}, Cards: ${data.cards[player]}`;
                 cardCountsList.appendChild(cardCountItem);
             }
+            socket.emit('request_cards', {hashed_game_id: '{{ hashed_game_id }}'});
         }
     });
 

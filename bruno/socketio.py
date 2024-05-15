@@ -51,7 +51,7 @@ class GameNamespace(Namespace):
         return True
 
     @staticmethod
-    def send_update_cards(game_id: int, hashed_game_id: str):
+    def send_update_cards(game_id: int, hashed_game_id: str, pull_cards: False):
         """Sends the card amount of all players in a game
 
         Args:
@@ -59,7 +59,7 @@ class GameNamespace(Namespace):
             hashed_game_id (str): The hashed game id
         """
         cards_data = card_amounts_in_game(game_id)
-        emit('update_cards', {'cards': cards_data},
+        emit('update_cards', {'cards': cards_data, 'pull_cards': pull_cards},
              room=hashed_game_id)
 
     @authenticated_only
@@ -130,7 +130,7 @@ class GameNamespace(Namespace):
         game_id = hashids.decode(hashed_game_id)[0]
         cards_data = get_cards_by_player(current_user)
         emit("move_done", {"cards": cards_data}, namespace='/game')
-        self.send_update_cards(game_id, hashed_game_id)
+        self.send_update_cards(game_id, hashed_game_id, True)
 
     @authenticated_only
     def on_request_cards(self, data):
