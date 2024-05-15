@@ -132,10 +132,8 @@ class GameNamespace(Namespace):
         card_id = data['card_id']
         # TODO check if player can move
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
-            print("1")
             remove_card_from_player(current_user, card_id)
             # TODO CHECK FOR WIN
-        print(action, card_id, check_card_playable(card_id, game_id))
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
