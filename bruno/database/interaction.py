@@ -616,18 +616,36 @@ def get_cards_by_player(player) -> dict:
     return [{'id': card.id, 'color': card.color, 'value': card.value, 'type': card.type} for card in player.cards]
 
 
-def check_card_playable(card_id: int, game_id) -> bool:
+def check_card_playable(card_id: int, game_id: int) -> bool:
     """Checks if the player can play the card
 
     Args:
         card_id (int): The id of the card to check
-        game_id (_type_): The id of the game to check
+        game_id (int): The id of the game to check
 
     Returns:
         bool: If the card is playable
     """
-    # TODO Logic
-    return True
+    #TODO RUELS
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    last_card = game.last_card
+    if not last_card:
+        return True
+    card = Card.query.get(card_id)
+    if not card:
+        return False
+    
+    if last_card.color == 'wild' and card.color == last_card.color:
+        return False
+    if card.color == 'wild':
+        return True
+    if card.color == last_card.color or card.value == last_card.value or card.type == last_card.type:
+        return True
+
+    return False
+
 
 
 def get_last_card_by_game(game_id: int) -> dict:
