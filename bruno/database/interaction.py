@@ -569,8 +569,9 @@ def select_start_card(game_id: int) -> bool:
         if not game:
             print("Game not found.")
             return False
-
         start_card = select_random_card()
+        while start_card.color == 'wild':
+            start_card = select_random_card()
         if start_card:
             game.last_card = start_card
             db.session.commit()
@@ -652,8 +653,11 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
     if not card:
         return False
 
-    if last_card.color == 'wild' and card.color == last_card.color:
-        return False
+    if last_card.color == 'wild':
+        if card.color == last_card.color:
+            return False
+        # TODO Wild card color selection
+        return True
     if card.color == 'wild':
         return True
     if card.color == last_card.color or (card.value == last_card.value and card.type == last_card.type and card.type):
