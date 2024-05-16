@@ -83,27 +83,39 @@
 
     //in_game
 
-    socket.on('update_cards', function(data) {
-        if (in_game) {
-            console.log('Cards data:', data.cards);
-            var cardCountsList = document.getElementById('card-counts');
-            cardCountsList.innerHTML = '';
-            for (var player in data.cards) {
-                var cardCountItem = document.createElement('div');
-                cardCountItem.className = 'card-count-item';
-                cardCountItem.innerHTML = `Player: ${player}, Cards: ${data.cards[player]}`;
-                cardCountsList.appendChild(cardCountItem);
+socket.on('update_cards', function(data) {
+    if (in_game) {
+        console.log('Cards data:', data.cards);
+        var cardCountsList = document.getElementById('card-counts');
+        cardCountsList.innerHTML = '';
+
+        for (var player in data.cards) {
+            var cardCountItem = document.createElement('div');
+            cardCountItem.className = 'card-count-item';
+            var cardCount = data.cards[player].card_count;
+            var isCurrentTurn = data.cards[player].is_current_turn;
+
+            cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
+            if (isCurrentTurn) {
+                cardCountItem.innerHTML += ' (Current Turn)';
+                cardCountItem.style.fontWeight = 'bold'; // Highlight the player whose turn it is
             }
-            if (data.last_card) {
-                var lastCardDiv = document.getElementById('last-card');
-                var lastCard = data.last_card;
-                lastCardDiv.innerHTML = `ID: ${data.last_card.id}, Color: ${data.last_card.color}, Value: ${data.last_card.value}, Type: ${data.last_card.type}`;
-            }
-            if(data.pull_cards) {
-                socket.emit('request_cards', {hashed_game_id: '{{ hashed_game_id }}'});
-            }
+
+            cardCountsList.appendChild(cardCountItem);
         }
-    });
+
+        if (data.last_card) {
+            var lastCardDiv = document.getElementById('last-card');
+            var lastCard = data.last_card;
+            lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+        }
+
+        if (data.pull_cards) {
+            socket.emit('request_cards', { hashed_game_id: '{{ hashed_game_id }}' });
+        }
+    }
+});
+
 
     socket.on('update_own_cards', function(data) {
         if (in_game) {

@@ -585,15 +585,16 @@ def select_start_card(game_id: int) -> bool:
         return False
 
 
-def card_amounts_in_game(game_id: int) -> dict:
+def card_amounts_turn_in_game(game_id: int) -> dict:
     """
-    Describe the card amounts of all players in a given game.
+    Describe the card amounts of all players in a given game and if the player can move.
 
     Args:
         game_id (int): The ID of the game.
 
     Returns:
-        dict: A dictionary with player names as keys and the count of their cards as values.
+        dict: A dictionary with player names as keys and another dictionary as values containing
+              the count of their cards and a boolean indicating if it's their turn.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -604,7 +605,10 @@ def card_amounts_in_game(game_id: int) -> dict:
     card_amounts = {}
     for player in players:
         total_cards = sum(player_card.amount for player_card in player.cards)
-        card_amounts[player.name] = total_cards
+        card_amounts[player.name] = {
+            'card_count': total_cards,
+            'is_current_turn': player.is_current_turn
+        }
 
     return card_amounts
 
