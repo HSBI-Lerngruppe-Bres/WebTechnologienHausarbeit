@@ -584,7 +584,7 @@ def select_start_card(game_id: int) -> bool:
         return False
 
 
-def card_amounts_in_game(game_id: int):
+def card_amounts_in_game(game_id: int) -> dict:
     """
     Describe the card amounts of all players in a given game.
 
@@ -592,7 +592,7 @@ def card_amounts_in_game(game_id: int):
         game_id (int): The ID of the game.
 
     Returns:
-        Dict[str, int]: A dictionary with player names as keys and the count of their cards as values.
+        dict: A dictionary with player names as keys and the count of their cards as values.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -600,7 +600,10 @@ def card_amounts_in_game(game_id: int):
         return {}
 
     players = Player.query.filter_by(game_id=game_id).all()
-    card_amounts = {player.name: len(player.cards) for player in players}
+    card_amounts = {}
+    for player in players:
+        total_cards = sum(player_card.amount for player_card in player.cards)
+        card_amounts[player.name] = total_cards
 
     return card_amounts
 
@@ -616,7 +619,16 @@ def get_cards_by_player(player: Player) -> list:
         list: A list of dictionaries representing the cards.
     """
     player_cards = PlayerCards.query.filter_by(player_id=player.id).all()
-    return [{'id': player_card.card.id, 'color': player_card.card.color, 'value': player_card.card.value, 'type': player_card.card.type, 'amount': player_card.amount} for player_card in player_cards]
+    cards = []
+    for player_card in player_cards:
+        for _ in range(player_card.amount):
+            cards.append({
+                'id': player_card.card.id,
+                'color': player_card.card.color,
+                'value': player_card.card.value,
+                'type': player_card.card.type
+            })
+    return cards
 
 
 def check_card_playable(card_id: int, game_id: int) -> bool:
