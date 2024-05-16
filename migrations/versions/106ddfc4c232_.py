@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 9523eb82a990
+Revision ID: 106ddfc4c232
 Revises: 
-Create Date: 2024-05-16 12:40:35.338698
+Create Date: 2024-05-16 15:38:04.917088
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9523eb82a990'
+revision = '106ddfc4c232'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,6 +37,7 @@ def upgrade():
     sa.Column('settings_black_on_black', sa.Boolean(), nullable=True),
     sa.Column('settings_plus_two_stacking', sa.Boolean(), nullable=True),
     sa.Column('last_card_id', sa.Integer(), nullable=True),
+    sa.Column('turn_direction', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['last_card_id'], ['card.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -46,6 +47,8 @@ def upgrade():
     sa.Column('game_id', sa.Integer(), nullable=True),
     sa.Column('is_game_owner', sa.Boolean(), nullable=False),
     sa.Column('last_active', sa.DateTime(), nullable=True),
+    sa.Column('turn_order', sa.Integer(), nullable=False),
+    sa.Column('is_current_turn', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['game_id'], ['game.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

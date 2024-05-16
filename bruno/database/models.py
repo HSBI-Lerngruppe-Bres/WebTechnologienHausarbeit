@@ -8,14 +8,14 @@ class Player(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
-    
+
     is_game_owner = db.Column(db.Boolean, default=False, nullable=False)
-    
+
     last_active = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+
     cards = db.relationship('PlayerCards', back_populates='player')
-    
+    # TODO initialisation
     turn_order = db.Column(db.Integer, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -44,7 +44,7 @@ class Game(db.Model):
     last_card = db.relationship('Card', foreign_keys=[last_card_id])
 
     turn_direction = db.Column(db.Integer, nullable=False, default=1)
-    
+
     def __repr__(self):
         return f'Game(id={self.id}, name={self.name})'
 
