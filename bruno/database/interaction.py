@@ -595,7 +595,7 @@ def card_amounts_turn_in_game(game_id: int) -> dict:
     Returns:
         dict: A dictionary with player names as keys and another dictionary as values containing
               the count of their cards and a boolean indicating if it's their turn.
-    """randomize_order
+    """
     game = Game.query.get(game_id)
     if not game:
         print("Game not found.")
@@ -756,10 +756,7 @@ def advance_turn(game_id) -> bool:
     Returns:
     tuple: A boolean success status and the next Player object if successful.
     """
-    success, next_player = get_next_player(game_id)
-    if not success:
-        return False, None
-
+    next_player = get_next_player(game_id)
     current_player = Player.query.filter_by(
         game_id=game_id, is_current_turn=True).first()
     if not current_player:
@@ -849,11 +846,11 @@ def handle_card_action(card_id: int, game_id: int) -> bool:
     """
     game = Game.query.get(game_id)
     if not game:
-        return False, "Game not found"
+        return False
 
     card = Card.query.get(card_id)
     if not card:
-        return False, "Card not found"
+        return False
 
     if card.type == "reverse":
         reverse_turn_order(game_id)
@@ -866,7 +863,7 @@ def handle_card_action(card_id: int, game_id: int) -> bool:
 
 
 def randomize_order(game_id: int) -> bool:
-    """Randomizes the turn order of players in a given game.
+    """Randomizes the turn order of players in a given game. And sets the turn for the first player to true
 
     Args:
         game_id (int): The ID of the game for which to randomize player order.
@@ -889,6 +886,7 @@ def randomize_order(game_id: int) -> bool:
 
         for index, player in enumerate(players):
             player.turn_order = index
+            player.is_current_turn = (index == 0)
             db.session.add(player)
 
         db.session.commit()
