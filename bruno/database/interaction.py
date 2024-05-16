@@ -626,7 +626,7 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
     Returns:
         bool: If the card is playable
     """
-    #TODO RUELS
+    # TODO RUELS
     game = Game.query.get(game_id)
     if not game:
         return False
@@ -636,7 +636,7 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
     card = Card.query.get(card_id)
     if not card:
         return False
-    
+
     if last_card.color == 'wild' and card.color == last_card.color:
         return False
     if card.color == 'wild':
@@ -645,7 +645,6 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
         return True
 
     return False
-
 
 
 def get_last_card_by_game(game_id: int) -> dict:
@@ -663,3 +662,30 @@ def get_last_card_by_game(game_id: int) -> dict:
     if last_card:
         return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type}
     return {}
+
+
+def set_new_last_card(game_id: int, card_id: int) -> bool:
+    """
+    Set a new last card for the specified game.
+
+    Args:
+        game_id (int): The ID of the game to update.
+        card_id (int): The ID of the new last card.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    card = Card.query.get(card_id)
+    if not card:
+        return False
+    game.last_card_id = card_id
+    game.last_card = card
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        return False
