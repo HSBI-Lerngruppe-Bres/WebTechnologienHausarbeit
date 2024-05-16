@@ -708,3 +708,154 @@ def set_new_last_card(game_id: int, card_id: int) -> bool:
     except Exception as e:
         db.session.rollback()
         return False
+
+
+def get_next_player(game_id) -> Player:
+    """
+    Finds the next player in the game based on the current turn order.
+
+    Parameters:
+    game_id (int): The ID of the game to find the next player for.
+
+    Returns:
+    Player: The next Player object if successful, None if an error occurs.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return None
+
+    current_player = Player.query.filter_by(
+        game_id=game_id, is_current_turn=True).first()
+    if not current_player:
+        return None
+
+    players = Player.query.filter_by(
+        game_id=game_id).order_by(Player.turn_order).all()
+    next_turn_order = (current_player.turn_order +
+                       game.turn_direction) % len(players)
+
+    next_player = Player.query.filter_by(
+        game_id=game_id, turn_order=next_turn_order).first()
+    if not next_player:
+        return None
+
+    return next_player
+
+
+def advance_turn(game_id) -> bool:
+    """
+    Advances the turn to the next player in the game.
+
+    Parameters:
+    game_id (int): The ID of the game to advance the turn for.
+
+    Returns:
+    tuple: A boolean success status and the next Player object if successful.
+    """
+    success, next_player = get_next_player(game_id)
+    if not success:
+        return False, None
+
+    current_player = Player.query.filter_by(
+        game_id=game_id, is_current_turn=True).first()
+    if not current_player:
+        return False, None
+
+    current_player.is_current_turn = False
+    next_player.is_current_turn = True
+
+    db.session.commit()
+    return True, next_player
+
+
+def skip_next_player(game_id) -> bool:
+    """
+    Skips the next player's turn in the game.
+
+    Parameters:
+    game_id (int): The ID of the game to skip the next player's turn for.
+
+    Returns:
+    bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    advance_turn(game_id)
+    advance_turn(game_id)
+
+    return True
+
+
+def reverse_turn_order(game_id) -> bool:
+    """
+    Reverses the turn order direction in the game.
+
+    Parameters:
+    game_id (int): The ID of the game to reverse the turn order for.
+
+    Returns:
+    bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    game.turn_direction *= -1
+    db.session.commit()
+
+    return True
+
+
+def is_player_turn(game_id: int, player: Player) -> bool:
+    """
+    Checks if it is the specified player's turn in the game.
+
+    Parameters:
+    game_id (int): The ID of the game.
+    player (Player): The player object.
+
+    Returns:
+    bool: A boolean indicating if it is the player's turn.
+
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    if not player or player.game_id != game_id:
+        return False
+
+    if player.is_current_turn:
+        return True
+    return False
+
+
+def handle_card_action(card_id: int, game_id: int) -> bool:
+    """
+    Handles the action of playing a card in the game.
+
+    Parameters:
+    card_id (int): The ID of the card being played.
+    game_id (int): The ID of the game where the card is played.
+
+    Returns:
+    bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False, "Game not found"
+
+    card = Card.query.get(card_id)
+    if not card:
+        return False, "Card not found"
+
+    if card.type == "reverse":
+        reverse_turn_order(game_id)
+    elif card.type == "skip":
+        skip_next_player(game_id)
+    elif card.type == "draw":
+        draw_cards(get_next_player(game_id), card.value)
+    db.session.commit()
+    return True
