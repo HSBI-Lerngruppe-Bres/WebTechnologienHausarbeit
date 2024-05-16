@@ -7,13 +7,11 @@ class Player(db.Model, UserMixin):
     __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=False, nullable=False)
-    game_id = db.Column(db.Integer, db.ForeignKey(
-        'game.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     is_game_owner = db.Column(db.Boolean, default=False, nullable=False)
     last_active = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
-    cards = db.relationship(
-        'Card', secondary='player_cards', backref='players')
+    cards = db.relationship('PlayerCards', back_populates='player')
 
     def __repr__(self):
         return f'Player(id={self.id}, name={self.name})'
@@ -51,7 +49,7 @@ class PlayerCards(db.Model):
     amount = db.Column(db.Integer, nullable=False, default=1)
 
     player = db.relationship('Player', back_populates='cards')
-    card = db.relationship('Card', back_populates='players')
+    card = db.relationship('Card', back_populates='player_cards')
 
 
 class Card(db.Model):
@@ -61,7 +59,7 @@ class Card(db.Model):
     value = db.Column(db.Integer, nullable=True)
     type = db.Column(db.String(20), nullable=False)
     frequency = db.Column(db.Integer, nullable=False)
-    players = db.relationship('PlayerCards', back_populates='card')
+    player_cards = db.relationship('PlayerCards', back_populates='card')
 
     def __repr__(self):
         return f'Card(id={self.id}, color={self.color}, value={self.value}, type={self.type})'
