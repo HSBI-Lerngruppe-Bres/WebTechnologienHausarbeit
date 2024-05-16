@@ -595,7 +595,7 @@ def card_amounts_turn_in_game(game_id: int) -> dict:
     Returns:
         dict: A dictionary with player names as keys and another dictionary as values containing
               the count of their cards and a boolean indicating if it's their turn.
-    """
+    """randomize_order
     game = Game.query.get(game_id)
     if not game:
         print("Game not found.")
@@ -863,3 +863,37 @@ def handle_card_action(card_id: int, game_id: int) -> bool:
         draw_cards(get_next_player(game_id), card.value)
     db.session.commit()
     return True
+
+
+def randomize_order(game_id: int) -> bool:
+    """Randomizes the turn order of players in a given game.
+
+    Args:
+        game_id (int): The ID of the game for which to randomize player order.
+
+    Returns:
+        bool: True if the order was successfully randomized, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            print(f"Game with id {game_id} not found.")
+            return False
+
+        players = Player.query.filter_by(game_id=game_id).all()
+        if not players:
+            print(f"No players found for game id {game_id}.")
+            return False
+
+        random.shuffle(players)
+
+        for index, player in enumerate(players):
+            player.turn_order = index
+            db.session.add(player)
+
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"An error occurred while randomizing the order: {e}")
+        db.session.rollback()
+        return False

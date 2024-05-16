@@ -98,7 +98,7 @@ socket.on('update_cards', function(data) {
             cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
             if (isCurrentTurn) {
                 cardCountItem.innerHTML += ' (Current Turn)';
-                cardCountItem.style.fontWeight = 'bold'; // Highlight the player whose turn it is
+                cardCountItem.style.fontWeight = 'bold';
             }
 
             cardCountsList.appendChild(cardCountItem);

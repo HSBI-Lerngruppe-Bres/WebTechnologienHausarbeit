@@ -16,7 +16,7 @@ class Player(db.Model, UserMixin):
 
     cards = db.relationship('PlayerCards', back_populates='player')
     # TODO initialisation
-    turn_order = db.Column(db.Integer, nullable=False)
+    turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
