@@ -1,13 +1,11 @@
 import random
-from .models import Player, Card
 from . import db
-from .models import Game, Player, db
+from .models import Game, Player, db, PlayerCards, Card
 from werkzeug.security import check_password_hash
 from bruno.database.models import Game
 from bruno.database import db
 from sqlalchemy import func
 from typing import List, Optional
-from .models import Player
 from werkzeug.security import generate_password_hash
 from flask import flash, current_app
 from hashids import Hashids
@@ -484,7 +482,7 @@ def remove_all_cards(player: Player) -> bool:
     bool: True if the operation was successful, False otherwise.
     """
     try:
-        player.cards.clear()
+        PlayerCards.query.filter_by(player_id=player.id).delete()
         db.session.commit()
         return True
     except Exception as e:
@@ -506,10 +504,13 @@ def remove_card_from_player(player: Player, card_id: int) -> bool:
     bool: True if the operation was successful, False otherwise.
     """
     try:
-        card_to_remove = next(
-            (card for card in player.cards if card.id == card_id), None)
-        if card_to_remove:
-            player.cards.remove(card_to_remove)
+        player_card = PlayerCards.query.filter_by(
+            player_id=player.id, card_id=card_id).first()
+        if player_card:
+            if player_card.amount > 1:
+                player_card.amount -= 1
+            else:
+                db.session.delete(player_card)
             db.session.commit()
             return True
         else:
@@ -534,16 +535,17 @@ def draw_cards(player: Player, amount: int) -> bool:
         bool: True if cards were successfully drawn, False otherwise.
     """
     try:
-        drawn_cards = []
         for _ in range(amount):
             card = select_random_card()
             if card:
-                drawn_cards.append(card)
-            else:
-                print("Failed to draw enough cards.")
-                return False
-        for card in drawn_cards:
-            player.cards.append(card)
+                player_card = PlayerCards.query.filter_by(
+                    player_id=player.id, card_id=card.id).first()
+                if player_card:
+                    player_card.amount += 1
+                else:
+                    new_player_card = PlayerCards(
+                        player_id=player.id, card_id=card.id, amount=1)
+                    db.session.add(new_player_card)
         db.session.commit()
         return True
     except Exception as e:
@@ -603,7 +605,7 @@ def card_amounts_in_game(game_id: int):
     return card_amounts
 
 
-def get_cards_by_player(player) -> dict:
+def get_cards_by_player(player: Player) -> list:
     """
     Get all cards for a given player.
 
@@ -613,7 +615,8 @@ def get_cards_by_player(player) -> dict:
     Returns:
         list: A list of dictionaries representing the cards.
     """
-    return [{'id': card.id, 'color': card.color, 'value': card.value, 'type': card.type} for card in player.cards]
+    player_cards = PlayerCards.query.filter_by(player_id=player.id).all()
+    return [{'id': player_card.card.id, 'color': player_card.card.color, 'value': player_card.card.value, 'type': player_card.card.type, 'amount': player_card.amount} for player_card in player_cards]
 
 
 def check_card_playable(card_id: int, game_id: int) -> bool:
@@ -641,7 +644,7 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
         return False
     if card.color == 'wild':
         return True
-    if card.color == last_card.color or card.value == last_card.value or card.type == last_card.type:
+    if card.color == last_card.color or (card.value == last_card.value and card.type == last_card.type and card.type):
         return True
 
     return False

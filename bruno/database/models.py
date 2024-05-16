@@ -43,12 +43,15 @@ class Game(db.Model):
         return f'Game(id={self.id}, name={self.name})'
 
 
-player_cards = db.Table('player_cards',
-                        db.Column('player_id', db.Integer, db.ForeignKey(
-                            'player.id'), primary_key=True),
-                        db.Column('card_id', db.Integer, db.ForeignKey(
-                            'card.id'), primary_key=True)
-                        )
+class PlayerCards(db.Model):
+    __tablename__ = 'player_cards'
+    player_id = db.Column(db.Integer, db.ForeignKey(
+        'player.id'), primary_key=True)
+    card_id = db.Column(db.Integer, db.ForeignKey('card.id'), primary_key=True)
+    amount = db.Column(db.Integer, nullable=False, default=1)
+
+    player = db.relationship('Player', back_populates='cards')
+    card = db.relationship('Card', back_populates='players')
 
 
 class Card(db.Model):
@@ -58,6 +61,7 @@ class Card(db.Model):
     value = db.Column(db.Integer, nullable=True)
     type = db.Column(db.String(20), nullable=False)
     frequency = db.Column(db.Integer, nullable=False)
+    players = db.relationship('PlayerCards', back_populates='card')
 
     def __repr__(self):
         return f'Card(id={self.id}, color={self.color}, value={self.value}, type={self.type})'
