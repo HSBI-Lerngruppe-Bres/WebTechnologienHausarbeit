@@ -148,7 +148,7 @@ class GameNamespace(Namespace):
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
-    @authenticated_oadvance_turnnly
+    @authenticated_only
     def on_request_cards(self, data):
         """When the client requests to receive its cards
         """
