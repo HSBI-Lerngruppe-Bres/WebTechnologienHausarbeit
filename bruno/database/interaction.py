@@ -833,7 +833,7 @@ def is_player_turn(game_id: int, player: Player) -> bool:
     return False
 
 
-def handle_card_action(card_id: int, game_id: int) -> bool:
+def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -> bool:
     """
     Handles the action of playing a card in the game.
 
@@ -851,6 +851,10 @@ def handle_card_action(card_id: int, game_id: int) -> bool:
     card = Card.query.get(card_id)
     if not card:
         return False
+
+    if card.color == "wild":
+        # TODO selected Color solution
+        pass
 
     if card.type == "reverse":
         reverse_turn_order(game_id)

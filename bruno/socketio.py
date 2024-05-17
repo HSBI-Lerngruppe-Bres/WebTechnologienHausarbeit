@@ -132,6 +132,7 @@ class GameNamespace(Namespace):
         cards_data = get_cards_by_player(current_user)
         action = data['action']
         card_id = data['card_id']
+        selected_color = data['selected_color']
         if not is_player_turn(game_id, current_user):
             return
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
@@ -139,7 +140,7 @@ class GameNamespace(Namespace):
                 return
             set_new_last_card(game_id, card_id)
             # TODO CHECK FOR WIN
-            handle_card_action(card_id, game_id)
+            handle_card_action(card_id, game_id, selected_color)
         if action == 'draw':
             draw_cards(current_user, 1)
         advance_turn(game_id)
