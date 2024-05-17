@@ -15,7 +15,7 @@ class Player(db.Model, UserMixin):
         db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     cards = db.relationship('PlayerCards', back_populates='player')
-    # TODO initialisation
+
     turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -42,6 +42,7 @@ class Game(db.Model):
     last_card_id = db.Column(
         db.Integer, db.ForeignKey('card.id'), nullable=True)
     last_card = db.relationship('Card', foreign_keys=[last_card_id])
+    last_card_color_selection = db.Column(db.String(20))
 
     turn_direction = db.Column(db.Integer, nullable=False, default=1)
 

@@ -658,10 +658,9 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
         return False
 
     if last_card.color == 'wild':
-        if card.color == last_card.color:
-            return False
-        # TODO Wild card color selection
-        return True
+        if card.color == game.last_card_color_selection:
+            return True
+        return False
     if card.color == 'wild':
         return True
     if card.color == last_card.color or (card.value == last_card.value and card.type == last_card.type and card.type):
@@ -853,8 +852,9 @@ def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -
         return False
 
     if card.color == "wild":
-        # TODO selected Color solution
-        pass
+        if selected_color not in ["red", "blue", "green", "yellow"]:
+            return False
+        game.last_card_color_selection = selected_color
 
     if card.type == "reverse":
         reverse_turn_order(game_id)

@@ -138,16 +138,17 @@ class GameNamespace(Namespace):
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
             if not remove_card_from_player(current_user, card_id):
                 return
+            if not handle_card_action(card_id, game_id, selected_color):
+                return
             set_new_last_card(game_id, card_id)
             # TODO CHECK FOR WIN
-            handle_card_action(card_id, game_id, selected_color)
         if action == 'draw':
             draw_cards(current_user, 1)
-        advance_turn(game_id)
+        (game_id)
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
-    @authenticated_only
+    @authenticated_oadvance_turnnly
     def on_request_cards(self, data):
         """When the client requests to receive its cards
         """
