@@ -157,6 +157,7 @@ class GameNamespace(Namespace):
             set_new_last_card(game_id, card_id)
             if check_for_win(current_user):
                 player_won(current_user)
+                # TODO uno button
         if action == 'draw':
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
