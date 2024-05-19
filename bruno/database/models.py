@@ -19,6 +19,9 @@ class Player(db.Model, UserMixin):
     turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
 
+    has_finished = db.Column(db.Boolean, default=False, nullable=False)
+    last_place = db.Column(db.Integer, default=1, nullable=False)
+
     def __repr__(self):
         return f'Player(id={self.id}, name={self.name})'
 
@@ -59,6 +62,9 @@ class PlayerCards(db.Model):
 
     player = db.relationship('Player', back_populates='cards')
     card = db.relationship('Card', back_populates='player_cards')
+
+    def __repr__(self):
+        return f'PlayerCard(player_id={self.player_id}, card_id={self.card_id})'
 
 
 class Card(db.Model):

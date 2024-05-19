@@ -713,15 +713,16 @@ def set_new_last_card(game_id: int, card_id: int) -> bool:
         return False
 
 
-def get_next_player(game_id) -> Player:
+def get_next_player(game_id: int) -> Player:
     """
-    Finds the next player in the game based on the current turn order.
+    Finds the next player in the game based on the current turn order,
+    skipping players who have finished.
 
-    Parameters:
-    game_id (int): The ID of the game to find the next player for.
+    Args:
+        game_id (int): The ID of the game to find the next player for.
 
     Returns:
-    Player: The next Player object if successful, None if an error occurs.
+        Player: The next Player object if successful, None if an error occurs.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -734,22 +735,27 @@ def get_next_player(game_id) -> Player:
 
     players = Player.query.filter_by(
         game_id=game_id).order_by(Player.turn_order).all()
-    next_turn_order = (current_player.turn_order +
-                       game.turn_direction) % len(players)
 
-    next_player = Player.query.filter_by(
-        game_id=game_id, turn_order=next_turn_order).first()
-    if not next_player:
+    if not players:
         return None
 
-    return next_player
+    num_players = len(players)
+    current_index = players.index(current_player)
+
+    for i in range(1, num_players):
+        next_index = (current_index + i * game.turn_direction) % num_players
+        next_player = players[next_index]
+        if not next_player.has_finished:
+            return next_player
+
+    return None
 
 
 def advance_turn(game_id) -> bool:
     """
     Advances the turn to the next player in the game.
 
-    Parameters:
+    Args:
     game_id (int): The ID of the game to advance the turn for.
 
     Returns:
@@ -772,11 +778,11 @@ def skip_next_player(game_id) -> bool:
     """
     Skips the next player's turn in the game.
 
-    Parameters:
-    game_id (int): The ID of the game to skip the next player's turn for.
+    Args:
+        game_id (int): The ID of the game to skip the next player's turn for.
 
     Returns:
-    bool: A boolean success status.
+        bool: A boolean success status.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -792,11 +798,11 @@ def reverse_turn_order(game_id) -> bool:
     """
     Reverses the turn order direction in the game.
 
-    Parameters:
-    game_id (int): The ID of the game to reverse the turn order for.
+    Args:
+        game_id (int): The ID of the game to reverse the turn order for.
 
     Returns:
-    bool: A boolean success status.
+        bool: A boolean success status.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -812,13 +818,12 @@ def is_player_turn(game_id: int, player: Player) -> bool:
     """
     Checks if it is the specified player's turn in the game.
 
-    Parameters:
-    game_id (int): The ID of the game.
-    player (Player): The player object.
+    Args:
+        game_id (int): The ID of the game.
+        player (Player): The player object.
 
     Returns:
-    bool: A boolean indicating if it is the player's turn.
-
+        bool: A boolean indicating if it is the player's turn.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -836,12 +841,12 @@ def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -
     """
     Handles the action of playing a card in the game.
 
-    Parameters:
-    card_id (int): The ID of the card being played.
-    game_id (int): The ID of the game where the card is played.
+    Args:
+        card_id (int): The ID of the card being played.
+        game_id (int): The ID of the game where the card is played.
 
     Returns:
-    bool: A boolean success status.
+        bool: A boolean success status.
     """
     game = Game.query.get(game_id)
     if not game:
@@ -899,3 +904,53 @@ def randomize_order(game_id: int) -> bool:
         print(f"An error occurred while randomizing the order: {e}")
         db.session.rollback()
         return False
+
+
+def remove_finished_status(player: Player) -> bool:
+    """Set the player's finished status to False if they have finished.
+
+    Args:
+        player (Player): The player to check and update.
+
+    Returns:
+        bool: True if the status was updated, False otherwise.
+    """
+    if player.has_finished:
+        player.has_finished = False
+        db.session.commit()
+        return True
+    return False
+
+
+def check_for_win(player: Player) -> bool:
+    """Check if the player has won by having no cards left.
+
+    Args:
+        player (Player): The player to check.
+
+    Returns:
+        bool: True if the player has no cards left, False otherwise.
+    """
+    if not player.cards:
+        return True
+    return False
+
+
+def player_won(player: Player) -> bool:
+    """_summary_
+
+    Args:
+        player (Player): _description_
+
+    Returns:
+        bool: _description_
+    """
+    if check_for_win(player):
+        player.has_finished = True
+        finished_players = Player.query.filter_by(
+            game_id=player.game_id, has_finished=True).count()
+        player.last_place = finished_players + 1
+
+        db.session.commit()
+        return True
+    return False

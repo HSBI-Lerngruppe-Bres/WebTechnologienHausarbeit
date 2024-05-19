@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -115,6 +115,7 @@ class GameNamespace(Namespace):
             return
         start_game(game_id)
         for player in get_players_by_game_id(game_id):
+            remove_finished_status(player)
             remove_all_cards(player)
             draw_cards(player, get_settings_by_game_id(
                 game_id)["starting_card_amount"])
@@ -141,10 +142,12 @@ class GameNamespace(Namespace):
             if not handle_card_action(card_id, game_id, selected_color):
                 return
             set_new_last_card(game_id, card_id)
+            if check_for_win(current_user):
+                player_won(current_user)
             # TODO CHECK FOR WIN
         if action == 'draw':
             draw_cards(current_user, 1)
-        (game_id)
+        advance_turn(game_id)
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
