@@ -83,39 +83,58 @@
 
     //in_game
 
-socket.on('update_cards', function(data) {
-    if (in_game) {
-        console.log('Cards data:', data.cards);
-        var cardCountsList = document.getElementById('card-counts');
-        cardCountsList.innerHTML = '';
+    socket.on('update_cards', function(data) {
+        if (in_game) {
+            console.log('Cards data:', data.cards);
+            var cardCountsList = document.getElementById('card-counts');
+            cardCountsList.innerHTML = '';
 
-        for (var player in data.cards) {
-            var cardCountItem = document.createElement('div');
-            cardCountItem.className = 'card-count-item';
-            var cardCount = data.cards[player].card_count;
-            var isCurrentTurn = data.cards[player].is_current_turn;
+            for (var player in data.cards) {
+                var cardCountItem = document.createElement('div');
+                cardCountItem.className = 'card-count-item';
+                var cardCount = data.cards[player].card_count;
+                var isCurrentTurn = data.cards[player].is_current_turn;
 
-            cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
-            if (isCurrentTurn) {
-                cardCountItem.innerHTML += ' (Current Turn)';
-                cardCountItem.style.fontWeight = 'bold';
+                cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
+                if (isCurrentTurn) {
+                    cardCountItem.innerHTML += ' (Current Turn)';
+                    cardCountItem.style.fontWeight = 'bold';
+                }
+
+                cardCountsList.appendChild(cardCountItem);
             }
 
-            cardCountsList.appendChild(cardCountItem);
-        }
+            if (data.last_card) {
+                var lastCardDiv = document.getElementById('last-card');
+                var lastCard = data.last_card;
+                lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+            }
 
-        if (data.last_card) {
-            var lastCardDiv = document.getElementById('last-card');
-            var lastCard = data.last_card;
-            lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+            if (data.pull_cards) {
+                socket.emit('request_cards', { hashed_game_id: '{{ hashed_game_id }}' });
+            }
         }
+    });
 
-        if (data.pull_cards) {
-            socket.emit('request_cards', { hashed_game_id: '{{ hashed_game_id }}' });
+    socket.on('end_game', function(data) {
+        if(in_game){
+            return
         }
-    }
-});
-
+        if (!data.start) {
+            document.getElementById('startGameButton').disabled = false;
+            return
+        }
+        console.log("Game is starting...");
+        document.body.innerHTML = '<h1>Game is ending ...</h1>';
+        fetch("{{ url_for('sites.lobby', hashed_game_id=hashed_game_id, _external=True) }}")
+        .then(response => response.text())
+        .then(html => {
+            document.body.innerHTML = html;
+            in_game = true;
+            socket.emit('rejoin', {hashed_game_id: '{{ hashed_game_id }}'});
+        })
+        .catch(error => console.error('Error loading the game interface:', error));
+    });
 
     socket.on('update_own_cards', function(data) {
         if (in_game) {
@@ -138,6 +157,8 @@ socket.on('update_cards', function(data) {
             });
         }
     });
+
+
 
     function playCard(card_id, card_color) {
         if (card_color != 'wild') {

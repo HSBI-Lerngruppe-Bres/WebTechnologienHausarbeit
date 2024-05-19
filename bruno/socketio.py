@@ -80,6 +80,19 @@ class GameNamespace(Namespace):
         self.send_update_settings(game_id, hashed_game_id)
 
     @authenticated_only
+    def on_rejoin(self, data):
+        hashed_game_id = data['hashed_game_id']
+        hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
+        # TODO Check if allowed nessasary?
+        game_id = hashids.decode(hashed_game_id)[0]
+        if not check_game_join(game_id):
+            emit('kick', {'message': 'Game already started'},
+                 namespace='/game')
+            return
+        self.send_update_player(game_id, hashed_game_id)
+        self.send_update_settings(game_id, hashed_game_id)
+
+    @authenticated_only
     def on_disconnect(self):
         """Handles player disconnection."""
         game_id = get_game_id_by_player_id(current_user.id)
@@ -144,10 +157,12 @@ class GameNamespace(Namespace):
             set_new_last_card(game_id, card_id)
             if check_for_win(current_user):
                 player_won(current_user)
-                # TODO CHECK FOR END
         if action == 'draw':
             draw_cards(current_user, 1)
-        advance_turn(game_id)
+        if not advance_turn(game_id)[0]:
+            emit('end_game', {'end_game': True},
+                 room=hashed_game_id)
+            return
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
