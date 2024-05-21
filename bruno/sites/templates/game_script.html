@@ -130,7 +130,7 @@
         .then(response => response.text())
         .then(html => {
             document.body.innerHTML = html;
-            in_game = true;
+            in_game = false;
             socket.emit('rejoin', {hashed_game_id: '{{ hashed_game_id }}'});
         })
         .catch(error => console.error('Error loading the game interface:', error));
@@ -158,8 +158,6 @@
         }
     });
 
-
-
     function playCard(card_id, card_color) {
         if (card_color != 'wild') {
             makeMove('card', card_id)
@@ -181,6 +179,14 @@
     function makeMove(action, card_id = null, wild_color = null) {
         if (in_game) {
             socket.emit('move', {hashed_game_id: '{{ hashed_game_id }}', action: action, card_id: card_id, wild_color: wild_color});
+        } else {
+            console.log("Cannot make a move. The player is not in a game.");
+        }
+    }
+
+    function sayUno(action) {
+        if (in_game) {
+            socket.emit('uno', {hashed_game_id: '{{ hashed_game_id }}'});
         } else {
             console.log("Cannot make a move. The player is not in a game.");
         }
