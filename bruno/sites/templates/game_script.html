@@ -158,6 +158,11 @@
         }
     });
 
+    socket.on('uno', (data) => {
+        const player = data.player;
+        alert(`${player.name} has called UNO!`);
+    });
+
     function playCard(card_id, card_color) {
         if (card_color != 'wild') {
             makeMove('card', card_id)

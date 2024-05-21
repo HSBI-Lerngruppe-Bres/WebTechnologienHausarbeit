@@ -767,6 +767,9 @@ def advance_turn(game_id) -> bool:
     if not current_player:
         return False, None
 
+    if current_player.sayed_uno > 0:
+        current_player.sayed_uno -= 1
+
     current_player.is_current_turn = False
     next_player.is_current_turn = True
 
@@ -932,7 +935,11 @@ def check_for_win(player: Player) -> bool:
         bool: True if the player has no cards left, False otherwise.
     """
     if not player.cards:
-        return True
+        if player.sayed_uno == 1:
+            return True
+        else:
+            draw_cards(player, 1)
+            return False
     return False
 
 
@@ -954,3 +961,23 @@ def player_won(player: Player) -> bool:
         db.session.commit()
         return True
     return False
+
+
+def set_uno(player: Player) -> bool:
+    """Sets the 'sayed_uno' attribute of the player to 2.
+
+    Args:
+        player (Player): The player object.
+
+    Returns:
+        bool: True if the operation is successful, False otherwise.
+    """
+    try:
+        player.sayed_uno = 2
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False
