@@ -1,102 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Uno Card</title>
-    <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        background-color: #f4f4f4;
-      }
-      .cards {
-        display: flex;
-        position: relative; /* Sets the stacking context */
-      }
-      .card {
-        width: 100px; /* Standard Uno card size */
-        height: 150px;
-        border-radius: 8px;
-        color: #fff; /* White text color */
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        font-family: "Arial", sans-serif;
-        font-weight: bold;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        position: absolute; /* Absolute positioning to overlap */
-        overflow: hidden;
-        transition: transform 0.3s ease; /* Smooth transformation on hover */
-      }
-      .card:hover {
-        transform: translateY(-20px); /* Raises the card when hovered */
-      }
-      .card-number {
-        font-size: 28px;
-        font-weight: bold;
-      }
-      .card-action {
-        font-size: 16px;
-        font-weight: bold;
-      }
-      .card-small {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-size: 12px;
-      }
-      .card-small-bottom {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        font-size: 12px;
-        transform: rotate(180deg);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="cards">
-      <div
-        class="card"
-        style="background-color: rgb(202, 2, 2); z-index: 1; left: -30px;"
-      >
-        <div class="card-small">+2</div>
-        <div class="card-number">+2</div>
-        <div class="card-action">Draw Two</div>
-        <div class="card-small-bottom">+2</div>
-      </div>
-      <div
-        class="card"
-        style="background-color: rgb(0, 192, 0); z-index: 2; left: -10px;"
-      >
-        <div class="card-small">+2</div>
-        <div class="card-number">+2</div>
-        <div class="card-action">Draw Two</div>
-        <div class="card-small-bottom">+2</div>
-      </div>
-      <div
-        class="card"
-        style="background-color: rgb(0, 0, 190); z-index: 3; left: 10px;"
-      >
-        <div class="card-small">+2</div>
-        <div class="card-number">+2</div>
-        <div class="card-action">Draw Two</div>
-        <div class="card-small-bottom">+2</div>
-      </div>
-      <div
-        class="card"
-        style="background-color: rgb(255, 196, 0); z-index: 4; left: 30px;"
-      >
-        <div class="card-small">+2</div>
-        <div class="card-number">+2</div>
-        <div class="card-action">Draw Two</div>
-        <div class="card-small-bottom">+2</div>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uno Card</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .cards {
+      display: flex;
+      position: relative;
+      /* Sets the stacking context */
+    }
+
+    .card {
+      width: 100px;
+      /* Standard Uno card size */
+      height: 150px;
+      border-radius: 8px;
+      color: #fff;
+      /* White text color */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      font-family: "Arial", sans-serif;
+      font-weight: bold;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      position: absolute;
+      /* Absolute positioning to overlap */
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      /* Smooth transformation on hover */
+    }
+
+    .card:hover {
+      transform: translateY(-20px);
+      /* Raises the card when hovered */
+    }
+
+    .card-number {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .card-action {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .card-small {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      font-size: 12px;
+    }
+
+    .card-small-bottom {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-size: 12px;
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cards">
+    <div class="card" style="background-color: rgb(202, 2, 2); z-index: 1; left: -30px;">
+      <div class="card-small">+2</div>
+      <div class="card-number">+2</div>
+      <div class="card-action">Draw Two</div>
+      <div class="card-small-bottom">+2</div>
     </div>
-  </body>
+    <div class="card" style="background-color: rgb(0, 192, 0); z-index: 2; left: -10px;">
+      <div class="card-small">+2</div>
+      <div class="card-number">+2</div>
+      <div class="card-action">Draw Two</div>
+      <div class="card-small-bottom">+2</div>
+    </div>
+    <div class="card" style="background-color: rgb(0, 0, 190); z-index: 3; left: 10px;">
+      <div class="card-small">+2</div>
+      <div class="card-number">+2</div>
+      <div class="card-action">Draw Two</div>
+      <div class="card-small-bottom">+2</div>
+    </div>
+    <div class="card" style="background-color: rgb(255, 196, 0); z-index: 4; left: 30px;">
+      <div class="card-small">+2</div>
+      <div class="card-number">+2</div>
+      <div class="card-action">Draw Two</div>
+      <div class="card-small-bottom">+2</div>
+    </div>
+  </div>
+</body>
+
 </html>
