@@ -107,7 +107,11 @@
             if (data.last_card) {
                 var lastCardDiv = document.getElementById('last-card');
                 var lastCard = data.last_card;
-                lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+                if (lastCard.color === 'wild') {
+                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
+                } else {
+                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+                }
             }
 
             if (data.pull_cards) {

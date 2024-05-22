@@ -167,6 +167,8 @@ class GameNamespace(Namespace):
             if check_for_win(current_user):
                 player_won(current_user)
                 # TODO uno button
+        elif action == 'card':
+            return
         if action == 'draw':
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
