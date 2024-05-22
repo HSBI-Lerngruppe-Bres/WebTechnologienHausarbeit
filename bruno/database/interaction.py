@@ -682,6 +682,8 @@ def get_last_card_by_game(game_id: int) -> dict:
     last_card = game.last_card
 
     if last_card:
+        if last_card.color == 'wild':
+            return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type, 'selected_color': game.last_card_color_selection}
         return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type}
     return {}
 
