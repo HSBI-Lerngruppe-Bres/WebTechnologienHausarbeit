@@ -794,7 +794,6 @@ def skip_next_player(game_id) -> bool:
         return False
 
     advance_turn(game_id)
-    advance_turn(game_id)
 
     return True
 
