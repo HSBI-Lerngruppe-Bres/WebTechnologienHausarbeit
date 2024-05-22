@@ -181,9 +181,9 @@
             });
     }
 
-    function makeMove(action, card_id = null, wild_color = null) {
+    function makeMove(action, card_id = null, selected_color = null) {
         if (in_game) {
-            socket.emit('move', {hashed_game_id: '{{ hashed_game_id }}', action: action, card_id: card_id, wild_color: wild_color});
+            socket.emit('move', {hashed_game_id: '{{ hashed_game_id }}', action: action, card_id: card_id, selected_color: selected_color});
         } else {
             console.log("Cannot make a move. The player is not in a game.");
         }
