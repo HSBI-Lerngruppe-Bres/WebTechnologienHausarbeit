@@ -663,7 +663,9 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
         return False
     if card.color == 'wild':
         return True
-    if card.color == last_card.color or (card.value == last_card.value and card.type == last_card.type and card.type):
+    if card.color == last_card.color:
+        return True
+    if card.value == last_card.value and card.type == last_card.type:
         return True
 
     return False
@@ -776,6 +778,9 @@ def advance_turn(game_id) -> bool:
     next_player.is_current_turn = True
 
     db.session.commit()
+
+    if get_next_player(game_id) == next_player:
+        return False, next_player
     return True, next_player
 
 
