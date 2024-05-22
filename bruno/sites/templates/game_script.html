@@ -121,6 +121,7 @@
     });
 
     socket.on('end_game', function(data) {
+        console.log("Received end_game");
         if(!in_game){
             return
         }

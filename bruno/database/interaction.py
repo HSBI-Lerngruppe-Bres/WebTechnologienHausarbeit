@@ -755,13 +755,12 @@ def get_next_player(game_id: int) -> Player:
     return None
 
 
-def advance_turn(game_id: int, skip: bool = False) -> bool:
+def advance_turn(game_id: int) -> bool:
     """
     Advances the turn to the next player in the game.
 
     Args:
     game_id (int): The ID of the game to advance the turn for.
-    skip (bool): If this is a skip action. shouldnt decrease the uno score
 
     Returns:
     tuple: A boolean success status and the next Player object if successful.
@@ -771,10 +770,6 @@ def advance_turn(game_id: int, skip: bool = False) -> bool:
         game_id=game_id, is_current_turn=True).first()
     if not current_player:
         return False, None
-
-    #TODO skip handeling for uno score
-    if current_player.sayed_uno > 0 and not skip:
-        current_player.sayed_uno -= 1
 
     current_player.is_current_turn = False
     next_player.is_current_turn = True
@@ -985,6 +980,27 @@ def set_uno(player: Player) -> bool:
     """
     try:
         player.sayed_uno = 2
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False
+
+
+def lower_uno_score(player: Player) -> bool:
+    """Lowers the uno score if ubove 0
+
+    Args:
+        player (Player): The player to lower the score
+
+    Returns:
+        bool: True if the operation is successful, False otherwise.
+    """
+    try:
+        if player.sayed_uno > 0:
+            player.sayed_uno -= 1
         db.session.commit()
         return True
     except Exception as e:
