@@ -942,7 +942,7 @@ def check_for_win(player: Player) -> bool:
         if player.sayed_uno == 1:
             return True
         else:
-            draw_cards(player, 1)
+            draw_cards(player, 2)
             return False
     return False
 
