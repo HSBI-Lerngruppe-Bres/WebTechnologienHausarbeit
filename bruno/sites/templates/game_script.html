@@ -163,8 +163,8 @@
     });
 
     socket.on('uno', (data) => {
-        const player = data.player;
-        alert(`${player.name} has called UNO!`);
+        const player_name = data.player_name;
+        alert(`${player_name} has called UNO!`);
     });
 
     function playCard(card_id, card_color) {
