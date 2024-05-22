@@ -867,7 +867,10 @@ def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -
         game.last_card_color_selection = selected_color
 
     if card.type == "reverse":
-        reverse_turn_order(game_id)
+        if len(get_players_by_game_id(game_id)) == 2:
+            skip_next_player(game_id)
+        else:
+            reverse_turn_order(game_id)
     elif card.type == "skip":
         skip_next_player(game_id)
     elif card.type == "draw":
