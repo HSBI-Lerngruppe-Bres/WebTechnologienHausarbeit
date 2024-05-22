@@ -192,7 +192,6 @@ class GameNamespace(Namespace):
     def on_request_cards(self, data):
         """When the client requests to receive its cards
         """
-        # TODO some logic
         hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
