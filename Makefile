@@ -12,7 +12,7 @@ setup:
 	export SQLALCHEMY_DATABASE_URI=$(DB_URI)
 	@echo "Environment variables set!"
 
-rrdb:
+rrdb: # run and restart database
 	rm instance/app.db
 	flask --app bruno db upgrade
 	flask --app bruno populate_cards
