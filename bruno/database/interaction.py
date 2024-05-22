@@ -755,12 +755,13 @@ def get_next_player(game_id: int) -> Player:
     return None
 
 
-def advance_turn(game_id) -> bool:
+def advance_turn(game_id: int, skip: bool = False) -> bool:
     """
     Advances the turn to the next player in the game.
 
     Args:
     game_id (int): The ID of the game to advance the turn for.
+    skip (bool): If this is a skip action. shouldnt decrease the uno score
 
     Returns:
     tuple: A boolean success status and the next Player object if successful.
@@ -771,7 +772,8 @@ def advance_turn(game_id) -> bool:
     if not current_player:
         return False, None
 
-    if current_player.sayed_uno > 0:
+    #TODO skip handeling for uno score
+    if current_player.sayed_uno > 0 and not skip:
         current_player.sayed_uno -= 1
 
     current_player.is_current_turn = False

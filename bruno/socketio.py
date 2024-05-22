@@ -155,7 +155,6 @@ class GameNamespace(Namespace):
         action = data.get('action')
         card_id = data.get('card_id')
         selected_color = data.get('selected_color')
-
         if not is_player_turn(game_id, current_user):
             return
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
@@ -172,7 +171,7 @@ class GameNamespace(Namespace):
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
             emit('end_game', {'end': True},
-                 room=hashed_game_id)
+                 room=hashed_game_id, namespace='/game')
             return
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
