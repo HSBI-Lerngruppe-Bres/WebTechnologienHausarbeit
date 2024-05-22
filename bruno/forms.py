@@ -31,7 +31,7 @@ class CreatePlayerForm(FlaskForm):
     """The create player form
     """
     name = StringField('Player Name', validators=[
-        DataRequired(), Length(min=4, max=20)])
+        DataRequired(), Length(min=3, max=20)])
     submit = SubmitField('Login')
 
 

@@ -1,0 +1,328 @@
+{
+    "cards": [
+        {
+            "color": "red",
+            "value": 0,
+            "type": "normal",
+            "frequency": 1
+        },
+        {
+            "color": "red",
+            "value": 1,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 2,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 3,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 4,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 5,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 6,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 7,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 8,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 9,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": null,
+            "type": "skip",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": null,
+            "type": "reverse",
+            "frequency": 2
+        },
+        {
+            "color": "red",
+            "value": 2,
+            "type": "draw",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 0,
+            "type": "normal",
+            "frequency": 1
+        },
+        {
+            "color": "yellow",
+            "value": 1,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 2,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 3,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 4,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 5,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 6,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 7,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 8,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 9,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": null,
+            "type": "skip",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": null,
+            "type": "reverse",
+            "frequency": 2
+        },
+        {
+            "color": "yellow",
+            "value": 2,
+            "type": "draw",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 0,
+            "type": "normal",
+            "frequency": 1
+        },
+        {
+            "color": "green",
+            "value": 1,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 2,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 3,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 4,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 5,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 6,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 7,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 8,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 9,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": null,
+            "type": "skip",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": null,
+            "type": "reverse",
+            "frequency": 2
+        },
+        {
+            "color": "green",
+            "value": 2,
+            "type": "draw",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 0,
+            "type": "normal",
+            "frequency": 1
+        },
+        {
+            "color": "blue",
+            "value": 1,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 2,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 3,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 4,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 5,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 6,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 7,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 8,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 9,
+            "type": "normal",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": null,
+            "type": "skip",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": null,
+            "type": "reverse",
+            "frequency": 2
+        },
+        {
+            "color": "blue",
+            "value": 2,
+            "type": "draw",
+            "frequency": 2
+        },
+        {
+            "color": "wild",
+            "value": null,
+            "type": "wild",
+            "frequency": 4
+        },
+        {
+            "color": "wild",
+            "value": 4,
+            "type": "draw",
+            "frequency": 4
+        }
+    ]
+}

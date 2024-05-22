@@ -91,8 +91,25 @@ def game(hashed_game_id):
     hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
     game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
         hashed_game_id)) > 0 else None
-    if not game_id or not check_game(game_id) or check_player_in_game(current_user):
+    if not game_id or not check_game(game_id):
         flash("The game does not exist or u are already in a game.")
         return redirect(url_for("sites.index"))
-    check_player_in_game(game_id, current_user)
+    if not check_player_in_game(current_user):
+        flash("You have already joined a game.")
+        return redirect(url_for("sites.index"))
     return render_template("game.html", hashed_game_id=hashed_game_id)
+
+
+@site.route('/lobby/<string:hashed_game_id>', methods=['GET', 'POST'])
+@login_required
+def lobby(hashed_game_id):
+    hashids = Hashids(salt=current_app.config.get("SECRET_KEY"), min_length=5)
+    game_id = hashids.decode(hashed_game_id)[0] if len(hashids.decode(
+        hashed_game_id)) > 0 else None
+    if not game_id or not check_game(game_id):
+        flash("The game does not exist or u are already in a game.")
+        return redirect(url_for("sites.index"))
+    if not check_player_in_game(current_user):
+        flash("You have already joined a game.")
+        return redirect(url_for("sites.index"))
+    return render_template("lobby.html", hashed_game_id=hashed_game_id)

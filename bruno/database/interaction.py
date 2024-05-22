@@ -1,10 +1,11 @@
-from .models import Game, Player, db
+import random
+from . import db
+from .models import Game, Player, db, PlayerCards, Card
 from werkzeug.security import check_password_hash
 from bruno.database.models import Game
 from bruno.database import db
 from sqlalchemy import func
 from typing import List, Optional
-from .models import Player
 from werkzeug.security import generate_password_hash
 from flask import flash, current_app
 from hashids import Hashids
@@ -376,6 +377,34 @@ def start_game(game_id: int) -> bool:
         return False
 
 
+def end_game(game_id: int) -> bool:
+    """Ends the game by setting it to joinable.
+
+    Args:
+        game_id (int): The id of the game to be stopped.
+
+    Returns:
+        bool: True if the game was successfully updated, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if game and not game.joinable:
+            game.joinable = True
+            db.session.commit()
+            print(f"Game {game_id} ended. It is now joinable.")
+            return True
+        elif game and game.joinable:
+            print(f"Game {game_id} was not started.")
+            return False
+        else:
+            print("Game not found.")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"Failed to start game {game_id}: {e}")
+        return False
+
+
 def game_has_password(game_id: int) -> bool:
     """Checks if the game has a password
 
@@ -447,3 +476,562 @@ def check_player_in_game(player: Player) -> bool:
         bool: If the player is in the game
     """
     return not player.game_id is None
+
+
+def select_random_card() -> Card:
+    """
+    Select a random card based on its frequency.
+
+    Returns:
+        Card: The selected card object.
+    """
+    available_cards = Card.query.all()
+    if not available_cards:
+        print("No available cards to select.")
+        return None
+    card_pool = []
+    for card in available_cards:
+        card_pool.extend([card] * card.frequency)
+    if not card_pool:
+        print("Card pool is empty.")
+        return None
+
+    return random.choice(card_pool)
+
+
+def remove_all_cards(player: Player) -> bool:
+    """
+    Removes all cards from a player.
+
+    Args:
+    player (Player): The player object from whom all cards should be removed.
+
+    Returns:
+    bool: True if the operation was successful, False otherwise.
+    """
+    try:
+        PlayerCards.query.filter_by(player_id=player.id).delete()
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing all cards from player {
+              player.id}: {e}")
+        return False
+
+
+def remove_card_from_player(player: Player, card_id: int) -> bool:
+    """
+    Removes a specific card from a player by card ID.
+
+    Args:
+    player (Player): The player object from whom the card should be removed.
+    card_id (int): The ID of the card to be removed.
+
+    Returns:
+    bool: True if the operation was successful, False otherwise.
+    """
+    try:
+        player_card = PlayerCards.query.filter_by(
+            player_id=player.id, card_id=card_id).first()
+        if player_card:
+            if player_card.amount > 1:
+                player_card.amount -= 1
+            else:
+                db.session.delete(player_card)
+            db.session.commit()
+            return True
+        else:
+            print(f"Card with ID {card_id} not found for player {player.id}")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while removing card {
+              card_id} from player {player.id}: {e}")
+        return False
+
+
+def draw_cards(player: Player, amount: int) -> bool:
+    """
+    Draw a specified number of cards for a player.
+
+    Args:
+        player (Player): The player who will draw the cards.
+        amount (int): The number of cards to draw.
+
+    Returns:
+        bool: True if cards were successfully drawn, False otherwise.
+    """
+    try:
+        for _ in range(amount):
+            card = select_random_card()
+            if card:
+                player_card = PlayerCards.query.filter_by(
+                    player_id=player.id, card_id=card.id).first()
+                if player_card:
+                    player_card.amount += 1
+                else:
+                    new_player_card = PlayerCards(
+                        player_id=player.id, card_id=card.id, amount=1)
+                    db.session.add(new_player_card)
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while drawing cards: {e}")
+        return False
+
+
+def select_start_card(game_id: int) -> bool:
+    """
+    Select a starting card for a game.
+
+    Args:
+        game_id (int): The ID of the game for which to select the starting card.
+
+    Returns:
+        bool: True if a starting card was successfully selected, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            print("Game not found.")
+            return False
+        start_card = select_random_card()
+        while start_card.color == 'wild':
+            start_card = select_random_card()
+        if start_card:
+            game.last_card = start_card
+            db.session.commit()
+            return True
+        else:
+            print("Failed to select a starting card.")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred while selecting the start card: {e}")
+        return False
+
+
+def card_amounts_turn_in_game(game_id: int) -> dict:
+    """
+    Describe the card amounts of all players in a given game and if the player can move.
+
+    Args:
+        game_id (int): The ID of the game.
+
+    Returns:
+        dict: A dictionary with player names as keys and another dictionary as values containing
+              the count of their cards and a boolean indicating if it's their turn.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        print("Game not found.")
+        return {}
+
+    players = Player.query.filter_by(game_id=game_id).all()
+    card_amounts = {}
+    for player in players:
+        total_cards = sum(player_card.amount for player_card in player.cards)
+        card_amounts[player.name] = {
+            'card_count': total_cards,
+            'is_current_turn': player.is_current_turn
+        }
+
+    return card_amounts
+
+
+def get_cards_by_player(player: Player) -> list:
+    """
+    Get all cards for a given player.
+
+    Args:
+        player (Player): The player.
+
+    Returns:
+        list: A list of dictionaries representing the cards.
+    """
+    player_cards = PlayerCards.query.filter_by(player_id=player.id).all()
+    cards = []
+    for player_card in player_cards:
+        for _ in range(player_card.amount):
+            cards.append({
+                'id': player_card.card.id,
+                'color': player_card.card.color,
+                'value': player_card.card.value,
+                'type': player_card.card.type
+            })
+    return cards
+
+
+def check_card_playable(card_id: int, game_id: int) -> bool:
+    """Checks if the player can play the card
+
+    Args:
+        card_id (int): The id of the card to check
+        game_id (int): The id of the game to check
+
+    Returns:
+        bool: If the card is playable
+    """
+    # TODO RUELS
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    last_card = game.last_card
+    if not last_card:
+        return True
+    card = Card.query.get(card_id)
+    if not card:
+        return False
+
+    if last_card.color == 'wild':
+        if card.color == game.last_card_color_selection:
+            return True
+        return False
+    if card.color == 'wild':
+        return True
+    if card.color == last_card.color:
+        return True
+    if card.value == last_card.value and card.type == last_card.type:
+        return True
+
+    return False
+
+
+def get_last_card_by_game(game_id: int) -> dict:
+    """Get the last card played in the game.
+
+    Args:
+        game_id (int): The id of the game.
+
+    Returns:
+        dict: A dictionary representing the last card.
+    """
+    game = Game.query.get(game_id)
+    last_card = game.last_card
+
+    if last_card:
+        if last_card.color == 'wild':
+            return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type, 'selected_color': game.last_card_color_selection}
+        return {'id': last_card.id, 'color': last_card.color, 'value': last_card.value, 'type': last_card.type}
+    return {}
+
+
+def set_new_last_card(game_id: int, card_id: int) -> bool:
+    """
+    Set a new last card for the specified game.
+
+    Args:
+        game_id (int): The ID of the game to update.
+        card_id (int): The ID of the new last card.
+
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    card = Card.query.get(card_id)
+    if not card:
+        return False
+    game.last_card_id = card_id
+    game.last_card = card
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        return False
+
+
+def get_next_player(game_id: int) -> Player:
+    """
+    Finds the next player in the game based on the current turn order,
+    skipping players who have finished.
+
+    Args:
+        game_id (int): The ID of the game to find the next player for.
+
+    Returns:
+        Player: The next Player object if successful, None if an error occurs.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return None
+
+    current_player = Player.query.filter_by(
+        game_id=game_id, is_current_turn=True).first()
+    if not current_player:
+        return None
+
+    players = Player.query.filter_by(
+        game_id=game_id).order_by(Player.turn_order).all()
+
+    if not players:
+        return None
+
+    num_players = len(players)
+    current_index = players.index(current_player)
+
+    for i in range(1, num_players):
+        next_index = (current_index + i * game.turn_direction) % num_players
+        next_player = players[next_index]
+        if not next_player.has_finished:
+            return next_player
+
+    return None
+
+
+def advance_turn(game_id: int) -> bool:
+    """
+    Advances the turn to the next player in the game.
+
+    Args:
+    game_id (int): The ID of the game to advance the turn for.
+
+    Returns:
+    tuple: A boolean success status and the next Player object if successful.
+    """
+    next_player = get_next_player(game_id)
+    current_player = Player.query.filter_by(
+        game_id=game_id, is_current_turn=True).first()
+    if not current_player:
+        return False, None
+
+    current_player.is_current_turn = False
+    next_player.is_current_turn = True
+
+    db.session.commit()
+    if not get_next_player(game_id):
+        return False, next_player
+    return True, next_player
+
+
+def skip_next_player(game_id) -> bool:
+    """
+    Skips the next player's turn in the game.
+
+    Args:
+        game_id (int): The ID of the game to skip the next player's turn for.
+
+    Returns:
+        bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    advance_turn(game_id)
+
+    return True
+
+
+def reverse_turn_order(game_id) -> bool:
+    """
+    Reverses the turn order direction in the game.
+
+    Args:
+        game_id (int): The ID of the game to reverse the turn order for.
+
+    Returns:
+        bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    game.turn_direction *= -1
+    db.session.commit()
+
+    return True
+
+
+def is_player_turn(game_id: int, player: Player) -> bool:
+    """
+    Checks if it is the specified player's turn in the game.
+
+    Args:
+        game_id (int): The ID of the game.
+        player (Player): The player object.
+
+    Returns:
+        bool: A boolean indicating if it is the player's turn.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    if not player or player.game_id != game_id:
+        return False
+
+    if player.is_current_turn:
+        return True
+    return False
+
+
+def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -> bool:
+    """
+    Handles the action of playing a card in the game.
+
+    Args:
+        card_id (int): The ID of the card being played.
+        game_id (int): The ID of the game where the card is played.
+
+    Returns:
+        bool: A boolean success status.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+
+    card = Card.query.get(card_id)
+    if not card:
+        return False
+
+    if card.color == "wild":
+        if selected_color not in ["red", "blue", "green", "yellow"]:
+            return False
+        game.last_card_color_selection = selected_color
+
+    if card.type == "reverse":
+        if len(get_players_by_game_id(game_id)) == 2:
+            skip_next_player(game_id)
+        else:
+            reverse_turn_order(game_id)
+    elif card.type == "skip":
+        skip_next_player(game_id)
+    elif card.type == "draw":
+        draw_cards(get_next_player(game_id), card.value)
+    db.session.commit()
+    return True
+
+
+def randomize_order(game_id: int) -> bool:
+    """Randomizes the turn order of players in a given game. And sets the turn for the first player to true
+
+    Args:
+        game_id (int): The ID of the game for which to randomize player order.
+
+    Returns:
+        bool: True if the order was successfully randomized, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if not game:
+            print(f"Game with id {game_id} not found.")
+            return False
+
+        players = Player.query.filter_by(game_id=game_id).all()
+        if not players:
+            print(f"No players found for game id {game_id}.")
+            return False
+
+        random.shuffle(players)
+
+        for index, player in enumerate(players):
+            player.turn_order = index
+            player.is_current_turn = (index == 0)
+            db.session.add(player)
+
+        db.session.commit()
+        return True
+    except Exception as e:
+        print(f"An error occurred while randomizing the order: {e}")
+        db.session.rollback()
+        return False
+
+
+def remove_finished_status(player: Player) -> bool:
+    """Set the player's finished status to False if they have finished.
+
+    Args:
+        player (Player): The player to check and update.
+
+    Returns:
+        bool: True if the status was updated, False otherwise.
+    """
+    if player.has_finished:
+        player.has_finished = False
+        db.session.commit()
+        return True
+    return False
+
+
+def check_for_win(player: Player) -> bool:
+    """Check if the player has won by having no cards left.
+
+    Args:
+        player (Player): The player to check.
+
+    Returns:
+        bool: True if the player has no cards left, False otherwise.
+    """
+    if not player.cards:
+        if player.sayed_uno == 1:
+            return True
+        else:
+            draw_cards(player, 2)
+            return False
+    return False
+
+
+def player_won(player: Player) -> bool:
+    """_summary_
+
+    Args:
+        player (Player): _description_
+
+    Returns:
+        bool: _description_
+    """
+    if check_for_win(player):
+        player.has_finished = True
+        finished_players = Player.query.filter_by(
+            game_id=player.game_id, has_finished=True).count()
+        player.last_place = finished_players + 1
+
+        db.session.commit()
+        return True
+    return False
+
+
+def set_uno(player: Player) -> bool:
+    """Sets the 'sayed_uno' attribute of the player to 2.
+
+    Args:
+        player (Player): The player object.
+
+    Returns:
+        bool: True if the operation is successful, False otherwise.
+    """
+    try:
+        player.sayed_uno = 2
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False
+
+
+def lower_uno_score(player: Player) -> bool:
+    """Lowers the uno score if ubove 0
+
+    Args:
+        player (Player): The player to lower the score
+
+    Returns:
+        bool: True if the operation is successful, False otherwise.
+    """
+    try:
+        if player.sayed_uno > 0:
+            player.sayed_uno -= 1
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False
