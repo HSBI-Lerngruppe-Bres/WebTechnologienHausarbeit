@@ -377,6 +377,34 @@ def start_game(game_id: int) -> bool:
         return False
 
 
+def end_game(game_id: int) -> bool:
+    """Ends the game by setting it to joinable.
+
+    Args:
+        game_id (int): The id of the game to be stopped.
+
+    Returns:
+        bool: True if the game was successfully updated, False otherwise.
+    """
+    try:
+        game = Game.query.get(game_id)
+        if game and not game.joinable:
+            game.joinable = True
+            db.session.commit()
+            print(f"Game {game_id} ended. It is now joinable.")
+            return True
+        elif game and game.joinable:
+            print(f"Game {game_id} was not started.")
+            return False
+        else:
+            print("Game not found.")
+            return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"Failed to start game {game_id}: {e}")
+        return False
+
+
 def game_has_password(game_id: int) -> bool:
     """Checks if the game has a password
 
