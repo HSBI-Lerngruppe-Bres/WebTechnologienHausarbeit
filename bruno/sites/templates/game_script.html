@@ -147,7 +147,7 @@
                 cardItem.innerHTML = `ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}`;
                 var playButton = document.createElement('button');
                 playButton.innerHTML = 'Play';
-                playButton.className = 'play-button';
+                playButton.className = 'play-button btn btn-secondary';
 
                 playButton.addEventListener('click', function() {
                     playCard(card.id, card.color);
