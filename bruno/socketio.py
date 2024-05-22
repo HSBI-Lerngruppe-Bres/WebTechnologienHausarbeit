@@ -71,6 +71,11 @@ class GameNamespace(Namespace):
         emit('update_cards', {'cards': cards, 'last_card': last_card, 'pull_cards': pull_cards},
              room=hashed_game_id)
 
+    @staticmethod
+    def send_end_game(hashed_game_id: str):
+        emit('end_game', {'end': True},
+             room=hashed_game_id, namespace='/game')
+
     @authenticated_only
     def on_join(self, data):
         """Handles player joining a game."""
@@ -107,9 +112,14 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         hashed_game_id = hashids.encode(game_id)
         if game_id:
+            if is_player_turn(game_id, current_user):
+                advance_turn(game_id)
             remove_player(current_user.id)
             self.send_update_player(game_id, hashed_game_id)
             leave_room(hashed_game_id)
+            if len(get_players_by_game_id) <= 1:
+                end_game(game_id)
+                self.send_end_game(hashed_game_id)
         logout_user()
 
     @authenticated_only
@@ -172,9 +182,8 @@ class GameNamespace(Namespace):
         if action == 'draw':
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
-            emit('end_game', {'end': True},
-                 room=hashed_game_id, namespace='/game')
             end_game(game_id)
+            self.send_end_game(hashed_game_id)
             return
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
