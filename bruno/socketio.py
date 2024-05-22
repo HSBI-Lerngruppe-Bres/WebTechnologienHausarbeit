@@ -151,9 +151,9 @@ class GameNamespace(Namespace):
         if not is_player_turn(game_id, current_user):
             return
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
-            if not remove_card_from_player(current_user, card_id):
-                return
             if not handle_card_action(card_id, game_id, selected_color):
+                return
+            if not remove_card_from_player(current_user, card_id):
                 return
             set_new_last_card(game_id, card_id)
             if check_for_win(current_user):
