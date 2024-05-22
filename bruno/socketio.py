@@ -187,4 +187,4 @@ class GameNamespace(Namespace):
         if not is_player_turn(game_id, current_user):
             return
         set_uno(current_user)
-        emit("uno", {"player": current_user.app}, room=hashed_game_id)
+        emit("uno", {"player": current_user.id}, room=hashed_game_id)
