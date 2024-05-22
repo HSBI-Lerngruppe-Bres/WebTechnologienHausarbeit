@@ -45,7 +45,15 @@ class GameNamespace(Namespace):
              room=hashed_game_id)
 
     @staticmethod
-    def check_settings(settings: dict):
+    def check_settings(settings: dict) -> bool:
+        """Checks if the settings are valid
+
+        Args:
+            settings (dict): The settings dictionary
+
+        Returns:
+            bool: If the request is valid
+        """
         if int(settings.get("starting_card_amount")) > 20 or 2 > int(settings.get("starting_card_amount")):
             return False
         return True
