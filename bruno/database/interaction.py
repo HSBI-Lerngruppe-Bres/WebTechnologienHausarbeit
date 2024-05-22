@@ -775,8 +775,7 @@ def advance_turn(game_id: int) -> bool:
     next_player.is_current_turn = True
 
     db.session.commit()
-
-    if get_next_player(game_id) == next_player:
+    if not get_next_player(game_id):
         return False, next_player
     return True, next_player
 
