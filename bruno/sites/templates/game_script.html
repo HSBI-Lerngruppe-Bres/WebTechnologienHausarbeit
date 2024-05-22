@@ -121,14 +121,13 @@
     });
 
     socket.on('end_game', function(data) {
-        if(in_game){
+        if(!in_game){
             return
         }
-        if (!data.start) {
-            document.getElementById('startGameButton').disabled = false;
+        if (!data.end) {
             return
         }
-        console.log("Game is starting...");
+        console.log("Game is ending...");
         document.body.innerHTML = '<h1>Game is ending ...</h1>';
         fetch("{{ url_for('sites.lobby', hashed_game_id=hashed_game_id, _external=True) }}")
         .then(response => response.text())

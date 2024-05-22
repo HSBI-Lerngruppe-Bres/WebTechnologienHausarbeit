@@ -171,7 +171,7 @@ class GameNamespace(Namespace):
         if action == 'draw':
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
-            emit('end_game', {'end_game': True},
+            emit('end_game', {'end': True},
                  room=hashed_game_id)
             return
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
