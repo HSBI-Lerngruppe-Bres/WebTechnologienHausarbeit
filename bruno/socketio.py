@@ -66,7 +66,7 @@ class GameNamespace(Namespace):
     @authenticated_only
     def on_join(self, data):
         """Handles player joining a game."""
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         # TODO Check if allowed nessasary?
         game_id = hashids.decode(hashed_game_id)[0]
@@ -81,7 +81,7 @@ class GameNamespace(Namespace):
 
     @authenticated_only
     def on_rejoin(self, data):
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         # TODO Check if allowed nessasary?
         game_id = hashids.decode(hashed_game_id)[0]
@@ -108,18 +108,18 @@ class GameNamespace(Namespace):
     def on_update_settings(self, data):
         """Handles the settings update event
         """
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
-        if self.check_settings(data["settings"]) and check_owner(game_id, current_user):
-            update_settings(game_id, data["settings"])
+        if self.check_settings(data.get("settings")) and check_owner(game_id, current_user):
+            update_settings(game_id, data.get("settings"))
         self.send_update_settings(game_id, hashed_game_id)
 
     @authenticated_only
     def on_start_game(self, data):
         """When a player starts the game
         """
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         if len(get_players_by_game_id(game_id)) < current_app.config.get("MIN_PLAYERS_PER_GAME") or not check_owner(game_id, current_user):
@@ -140,13 +140,14 @@ class GameNamespace(Namespace):
     def on_move(self, data):
         """When a users plays a move
         """
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         cards_data = get_cards_by_player(current_user)
-        action = data['action']
-        card_id = data['card_id']
-        selected_color = data['selected_color']
+        action = data.get('action')
+        card_id = data.get('card_id')
+        selected_color = data.get('selected_color')
+
         if not is_player_turn(game_id, current_user):
             return
         if action == 'card' and card_id and check_card_playable(card_id, game_id):
@@ -172,7 +173,7 @@ class GameNamespace(Namespace):
         """When the client requests to receive its cards
         """
         # TODO some logic
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         cards_data = get_cards_by_player(current_user)
@@ -181,7 +182,7 @@ class GameNamespace(Namespace):
 
     @authenticated_only
     def on_uno(self, data):
-        hashed_game_id = data['hashed_game_id']
+        hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         game_id = hashids.decode(hashed_game_id)[0]
         if not is_player_turn(game_id, current_user):
