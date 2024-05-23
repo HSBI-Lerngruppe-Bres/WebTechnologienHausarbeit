@@ -111,13 +111,14 @@ class GameNamespace(Namespace):
         game_id = get_game_id_by_player_id(current_user.id)
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         hashed_game_id = hashids.encode(game_id)
+        print(current_user, "DISCONNECTED")
         if game_id:
             if is_player_turn(game_id, current_user):
                 advance_turn(game_id)
             remove_player(current_user.id)
             self.send_update_player(game_id, hashed_game_id)
             leave_room(hashed_game_id)
-            if len(get_players_by_game_id) <= 1:
+            if len(get_players_by_game_id(game_id)) <= 1:
                 end_game(game_id)
                 self.send_end_game(hashed_game_id)
         logout_user()
