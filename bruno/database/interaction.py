@@ -535,6 +535,8 @@ def remove_card_from_player(player: Player, card_id: int) -> bool:
         player_card = PlayerCards.query.filter_by(
             player_id=player.id, card_id=card_id).first()
         if player_card:
+            if len(player.cards) == 1 and player_card.color == 'wild' and not get_settings_by_game_id(player.game_id)['black_finish']:
+                return False
             if player_card.amount > 1:
                 player_card.amount -= 1
             else:
@@ -687,6 +689,8 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
 
     if last_card.color == 'wild':
         if card.color == game.last_card_color_selection:
+            return True
+        if get_settings_by_game_id(game_id)['black_on_black'] and card.color == 'wild':
             return True
         return False
     if card.color == 'wild':

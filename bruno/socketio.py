@@ -112,6 +112,7 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         hashed_game_id = hashids.encode(game_id)
         print(current_user, "DISCONNECTED")
+        # TODO find a new owner if owner leaves
         if game_id:
             if is_player_turn(game_id, current_user):
                 advance_turn(game_id)
@@ -181,6 +182,7 @@ class GameNamespace(Namespace):
         elif action == 'card':
             return
         if action == 'draw':
+            # TODO does not always result in advancing turn
             draw_cards(current_user, 1)
         if not advance_turn(game_id)[0]:
             end_game(game_id)
