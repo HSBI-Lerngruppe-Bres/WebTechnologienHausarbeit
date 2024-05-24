@@ -535,8 +535,6 @@ def remove_card_from_player(player: Player, card_id: int) -> bool:
         player_card = PlayerCards.query.filter_by(
             player_id=player.id, card_id=card_id).first()
         if player_card:
-            if len(player.cards) == 1 and player_card.color == 'wild' and not get_settings_by_game_id(player.game_id)['black_finish']:
-                return False
             if player_card.amount > 1:
                 player_card.amount -= 1
             else:
@@ -666,17 +664,17 @@ def get_cards_by_player(player: Player) -> list:
     return cards
 
 
-def check_card_playable(card_id: int, game_id: int) -> bool:
+def check_card_playable(player: Player, card_id: int, game_id: int) -> bool:
     """Checks if the player can play the card
 
     Args:
+        player (Player): The player who played the card
         card_id (int): The id of the card to check
         game_id (int): The id of the game to check
 
     Returns:
         bool: If the card is playable
     """
-    # TODO RUELS
     game = Game.query.get(game_id)
     if not game:
         return False
@@ -686,7 +684,14 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
     card = Card.query.get(card_id)
     if not card:
         return False
-
+    player_card = PlayerCards.query.filter_by(
+        player_id=player.id, card_id=card_id).first()
+    if last_card.type == 'draw' and game.draw_stack != 0 and not (card.type == 'draw' and get_settings_by_game_id(game_id)['plus_two_stacking']):
+        return False
+    if not player_card:
+        return False
+    if len(player.cards) == 1 and card.color == 'wild' and not get_settings_by_game_id(game_id)['black_card_finish']:
+        return False
     if last_card.color == 'wild':
         if card.color == game.last_card_color_selection:
             return True
@@ -702,6 +707,31 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
 
     return False
 
+
+def handle_draw_action(player: Player, game_id: int) -> bool:
+    """_summary_
+
+    Args:
+        player (Player): _description_
+        game_id (int): _description_
+
+    Returns:
+        bool: _description_
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    if game.draw_stack == 0:
+        draw_cards(player, 1)
+        return True
+    draw_cards(player, game.draw_stack)
+    game.draw_stack = 0
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        return False
 
 def get_last_card_by_game(game_id: int) -> dict:
     """Get the last card played in the game.
@@ -906,7 +936,8 @@ def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -
     elif card.type == "skip":
         skip_next_player(game_id)
     elif card.type == "draw":
-        draw_cards(get_next_player(game_id), card.value)
+        game.draw_stack += card.value
+        # draw_cards(get_next_player(game_id), card.value)
     db.session.commit()
     return True
 

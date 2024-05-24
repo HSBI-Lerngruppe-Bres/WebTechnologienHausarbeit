@@ -52,6 +52,8 @@ class Game(db.Model):
 
     turn_direction = db.Column(db.Integer, nullable=False, default=1)
 
+    draw_stack = db.Column(db.Integer, nullable=False, default=0)
+
     def __repr__(self):
         return f'Game(id={self.id}, name={self.name})'
 
