@@ -14,7 +14,8 @@ class Player(db.Model, UserMixin):
     last_active = db.Column(
         db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    cards = db.relationship('PlayerCards', back_populates='player')
+    cards = db.relationship(
+        'PlayerCards', back_populates='player', cascade='all, delete-orphan')
 
     turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
@@ -76,7 +77,8 @@ class Card(db.Model):
     value = db.Column(db.Integer, nullable=True)
     type = db.Column(db.String(20), nullable=False)
     frequency = db.Column(db.Integer, nullable=False)
-    player_cards = db.relationship('PlayerCards', back_populates='card')
+    player_cards = db.relationship(
+        'PlayerCards', back_populates='card', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'Card(id={self.id}, color={self.color}, value={self.value}, type={self.type})'
