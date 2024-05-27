@@ -19,6 +19,7 @@ class Player(db.Model, UserMixin):
 
     turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
+    has_drawn = db.Column(db.Boolean, default=False, nullable=False)
 
     has_finished = db.Column(db.Boolean, default=False, nullable=False)
     last_place = db.Column(db.Integer, default=1, nullable=False)

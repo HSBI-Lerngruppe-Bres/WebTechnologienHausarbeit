@@ -725,6 +725,7 @@ def handle_draw_action(player: Player, game_id: int) -> bool:
         draw_cards(player, 1)
         return True
     draw_cards(player, game.draw_stack)
+    player.has_drawn = True
     game.draw_stack = 0
     try:
         db.session.commit()
@@ -732,6 +733,7 @@ def handle_draw_action(player: Player, game_id: int) -> bool:
     except Exception as e:
         db.session.rollback()
         return False
+
 
 def get_last_card_by_game(game_id: int) -> dict:
     """Get the last card played in the game.
@@ -835,6 +837,7 @@ def advance_turn(game_id: int) -> bool:
 
     current_player.is_current_turn = False
     next_player.is_current_turn = True
+    current_player.has_drawn = False
 
     db.session.commit()
     if not get_next_player(game_id):
@@ -1070,3 +1073,16 @@ def lower_uno_score(player: Player) -> bool:
         print(f"An error occurred: {e}")
         db.session.rollback()
         return False
+
+
+def player_already_drawn(player: Player) -> bool:
+    """
+    Check if the player has already drawn a card during their turn.
+
+    Args:
+        player (Player): The player to check.
+
+    Returns:
+        bool: True if the player has already drawn a card, False otherwise.
+    """
+    return player.has_drawn

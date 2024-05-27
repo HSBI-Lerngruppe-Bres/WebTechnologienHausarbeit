@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import handle_draw_action, end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import player_already_drawn, handle_draw_action, end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -180,10 +180,11 @@ class GameNamespace(Namespace):
                 lower_uno_score(current_user)
         elif action == 'card':
             return
-        elif action == 'draw':
+        elif action == 'draw' and not player_already_drawn(current_user, game_id):
             handle_draw_action(current_user, game_id)
+        elif action == 'next_player' and player_already_drawn(current_user, game_id):
+            return
         if not advance_turn(game_id)[0] and action != 'draw':
-            # TODO after draw advance turn thing
             end_game(game_id)
             self.send_end_game(hashed_game_id)
             return
