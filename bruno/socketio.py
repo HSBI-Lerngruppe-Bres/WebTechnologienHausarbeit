@@ -180,9 +180,9 @@ class GameNamespace(Namespace):
                 lower_uno_score(current_user)
         elif action == 'card':
             return
-        elif action == 'draw' and not player_already_drawn(current_user, game_id):
+        elif action == 'draw' and not player_already_drawn(current_user):
             handle_draw_action(current_user, game_id)
-        elif action == 'next_player' and player_already_drawn(current_user, game_id):
+        elif action == 'next_player' and player_already_drawn(current_user):
             return
         if not advance_turn(game_id)[0] and action != 'draw':
             end_game(game_id)
