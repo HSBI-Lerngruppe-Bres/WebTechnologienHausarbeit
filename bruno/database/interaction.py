@@ -834,7 +834,7 @@ def advance_turn(game_id: int) -> bool:
     next_player = get_next_player(game_id)
     current_player = Player.query.filter_by(
         game_id=game_id, is_current_turn=True).first()
-    if not current_player:
+    if not current_player or not next_player:
         return False, None
 
     current_player.is_current_turn = False

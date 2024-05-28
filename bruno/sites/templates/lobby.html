@@ -84,11 +84,10 @@
         * copies that content to the clipboard, and alerts the user that the
         * action has been completed.
         */
-        //TODO does not work
         var copyText = document.getElementById("inviteLink");
         copyText.select();
         copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
+        navigator.clipboard.writeText(copyText.value)
     }
     </script>
 {% endblock %}
