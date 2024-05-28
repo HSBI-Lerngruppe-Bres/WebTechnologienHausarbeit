@@ -87,8 +87,13 @@
         //TODO does not work
         var copyText = document.getElementById("inviteLink");
         copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+
+        navigator.clipboard.writeText(copyText.value).then(function() {
+            console.log("Copied the text: " + copyText.value);
+        }).catch(function(err) {
+            console.error("Could not copy text: ", err);
+        });
     }
     </script>
 {% endblock %}
