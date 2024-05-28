@@ -709,24 +709,26 @@ def check_card_playable(player: Player, card_id: int, game_id: int) -> bool:
 
 
 def handle_draw_action(player: Player, game_id: int) -> bool:
-    """_summary_
+    """Handles the draw action for a player in a game.
 
     Args:
-        player (Player): _description_
-        game_id (int): _description_
+        player (Player): The player who is drawing a card.
+        game_id (int): The ID of the game.
 
     Returns:
-        bool: _description_
+        bool: True if the action was handled successfully, False otherwise.
     """
     game = Game.query.get(game_id)
     if not game:
         return False
     if game.draw_stack == 0:
         draw_cards(player, 1)
-        return True
-    draw_cards(player, game.draw_stack)
+    else:
+        draw_cards(player, game.draw_stack)
+        game.draw_stack = 0
+
     player.has_drawn = True
-    game.draw_stack = 0
+
     try:
         db.session.commit()
         return True
@@ -837,6 +839,7 @@ def advance_turn(game_id: int) -> bool:
 
     current_player.is_current_turn = False
     next_player.is_current_turn = True
+    next_player.has_drawn = False
     current_player.has_drawn = False
 
     db.session.commit()
