@@ -664,17 +664,17 @@ def get_cards_by_player(player: Player) -> list:
     return cards
 
 
-def check_card_playable(card_id: int, game_id: int) -> bool:
+def check_card_playable(player: Player, card_id: int, game_id: int) -> bool:
     """Checks if the player can play the card
 
     Args:
+        player (Player): The player who played the card
         card_id (int): The id of the card to check
         game_id (int): The id of the game to check
 
     Returns:
         bool: If the card is playable
     """
-    # TODO RUELS
     game = Game.query.get(game_id)
     if not game:
         return False
@@ -684,9 +684,18 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
     card = Card.query.get(card_id)
     if not card:
         return False
-
+    player_card = PlayerCards.query.filter_by(
+        player_id=player.id, card_id=card_id).first()
+    if last_card.type == 'draw' and game.draw_stack != 0 and not (card.type == 'draw' and get_settings_by_game_id(game_id)['plus_two_stacking']):
+        return False
+    if not player_card:
+        return False
+    if len(player.cards) == 1 and card.color == 'wild' and not get_settings_by_game_id(game_id)['black_card_finish']:
+        return False
     if last_card.color == 'wild':
         if card.color == game.last_card_color_selection:
+            return True
+        if get_settings_by_game_id(game_id)['black_on_black'] and card.color == 'wild':
             return True
         return False
     if card.color == 'wild':
@@ -697,6 +706,35 @@ def check_card_playable(card_id: int, game_id: int) -> bool:
         return True
 
     return False
+
+
+def handle_draw_action(player: Player, game_id: int) -> bool:
+    """Handles the draw action for a player in a game.
+
+    Args:
+        player (Player): The player who is drawing a card.
+        game_id (int): The ID of the game.
+
+    Returns:
+        bool: True if the action was handled successfully, False otherwise.
+    """
+    game = Game.query.get(game_id)
+    if not game:
+        return False
+    if game.draw_stack == 0:
+        draw_cards(player, 1)
+    else:
+        draw_cards(player, game.draw_stack)
+        game.draw_stack = 0
+
+    player.has_drawn = True
+
+    try:
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        return False
 
 
 def get_last_card_by_game(game_id: int) -> dict:
@@ -801,6 +839,8 @@ def advance_turn(game_id: int) -> bool:
 
     current_player.is_current_turn = False
     next_player.is_current_turn = True
+    next_player.has_drawn = False
+    current_player.has_drawn = False
 
     db.session.commit()
     if not get_next_player(game_id):
@@ -902,7 +942,8 @@ def handle_card_action(card_id: int, game_id: int, selected_color: str = None) -
     elif card.type == "skip":
         skip_next_player(game_id)
     elif card.type == "draw":
-        draw_cards(get_next_player(game_id), card.value)
+        game.draw_stack += card.value
+        # draw_cards(get_next_player(game_id), card.value)
     db.session.commit()
     return True
 
@@ -1035,3 +1076,16 @@ def lower_uno_score(player: Player) -> bool:
         print(f"An error occurred: {e}")
         db.session.rollback()
         return False
+
+
+def player_already_drawn(player: Player) -> bool:
+    """
+    Check if the player has already drawn a card during their turn.
+
+    Args:
+        player (Player): The player to check.
+
+    Returns:
+        bool: True if the player has already drawn a card, False otherwise.
+    """
+    return player.has_drawn

@@ -30,11 +30,13 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Settings</h3>
+
                     <!-- Starting Card Amount -->
                     <div class="input-group mb-3">
                         <span class="input-group-text">Starting Card Amount</span>
                         <input type="number" class="form-control" id="starting_card_amount" value="7" min="2" max="20" onchange="updateSettings()">
                     </div>
+
                     <!-- Black Card Finish Checkbox -->
                     <div class="input-group mb-3">
                         <div class="input-group-text">
@@ -58,6 +60,7 @@
                         </div>
                         <span class="form-control">Allow +2 Stacking</span>
                     </div>
+                    
                     <!-- Start Game Button -->
                     <div class="d-flex gap-2 justify-content-center">
                         <button type="button" class="btn btn-success btn-lg" id="startGameButton" onclick="startGame()">
@@ -81,6 +84,7 @@
         * copies that content to the clipboard, and alerts the user that the
         * action has been completed.
         */
+        //TODO does not work
         var copyText = document.getElementById("inviteLink");
         copyText.select();
         copyText.setSelectionRange(0, 99999);

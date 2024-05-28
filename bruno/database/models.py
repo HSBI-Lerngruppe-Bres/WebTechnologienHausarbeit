@@ -19,6 +19,7 @@ class Player(db.Model, UserMixin):
 
     turn_order = db.Column(db.Integer, default=-1, nullable=False)
     is_current_turn = db.Column(db.Boolean, default=False, nullable=False)
+    has_drawn = db.Column(db.Boolean, default=False, nullable=False)
 
     has_finished = db.Column(db.Boolean, default=False, nullable=False)
     last_place = db.Column(db.Integer, default=1, nullable=False)
@@ -51,6 +52,8 @@ class Game(db.Model):
     last_card_color_selection = db.Column(db.String(20))
 
     turn_direction = db.Column(db.Integer, nullable=False, default=1)
+
+    draw_stack = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f'Game(id={self.id}, name={self.name})'

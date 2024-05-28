@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import player_already_drawn, handle_draw_action, end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -112,6 +112,7 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         hashed_game_id = hashids.encode(game_id)
         print(current_user, "DISCONNECTED")
+        # TODO find a new owner if owner leaves
         if game_id:
             if is_player_turn(game_id, current_user):
                 advance_turn(game_id)
@@ -166,13 +167,14 @@ class GameNamespace(Namespace):
         action = data.get('action')
         card_id = data.get('card_id')
         selected_color = data.get('selected_color')
+        print(1, player_already_drawn(current_user))
+
         if not is_player_turn(game_id, current_user):
             return
-        if action == 'card' and card_id and check_card_playable(card_id, game_id):
+        if action == 'card' and card_id and check_card_playable(current_user, card_id, game_id):
             if not handle_card_action(card_id, game_id, selected_color):
                 return
-            if not remove_card_from_player(current_user, card_id):
-                return
+            remove_card_from_player(current_user, card_id)
             set_new_last_card(game_id, card_id)
             if check_for_win(current_user):
                 player_won(current_user)
@@ -180,12 +182,21 @@ class GameNamespace(Namespace):
                 lower_uno_score(current_user)
         elif action == 'card':
             return
-        if action == 'draw':
-            draw_cards(current_user, 1)
+        elif action == 'draw' and not player_already_drawn(current_user):
+            print(2.5, player_already_drawn(current_user))
+            print(2.7, handle_draw_action(current_user, game_id))
+            print(2.8, player_already_drawn(current_user))
+            emit("update_own_cards", {"cards": cards_data}, namespace='/game')
+            self.send_update_cards(game_id, hashed_game_id, True)
+            print(2, player_already_drawn(current_user))
+            return
+        elif action == 'draw' and player_already_drawn(current_user):
+            pass
         if not advance_turn(game_id)[0]:
             end_game(game_id)
             self.send_end_game(hashed_game_id)
             return
+        print(3, player_already_drawn(current_user))
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
