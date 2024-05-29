@@ -546,8 +546,8 @@ def remove_card_from_player(player: Player, card_id: int) -> bool:
             return False
     except Exception as e:
         db.session.rollback()
-        print(f"An error occurred while removing card {
-              card_id} from player {player.id}: {e}")
+        print(f"""An error occurred while removing card {
+              card_id} from player {player.id}: {e}""")
         return False
 
 
