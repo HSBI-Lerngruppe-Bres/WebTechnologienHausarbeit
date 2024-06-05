@@ -160,7 +160,7 @@
                 var cardFilename = `${card.color}_${card.value}_${card.type}.jpg`;
                 var cardImageUrl = staticBaseUrl + cardFilename;
                 cardItem.innerHTML = `
-                    <button class="btn btn-link">
+                    <button class="btn btn-link own-card">
                         <img class="w-100" src="${cardImageUrl}" alt="ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}, Selected_Color: ${card.selected_color}">
                     </button>
                 `;
