@@ -117,7 +117,11 @@
             if (data.last_card) {
                 var lastCardImage = document.getElementById('last_card_image');
                 var lastCard = data.last_card;
-                var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
+                if (lastCard.selected_color) {
+                    var cardFilename = `${lastCard.selected_color}_no_number.jpg`;
+                } else {
+                    var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
+                }
                 var cardImageUrl = staticBaseUrl + cardFilename;
                 lastCardImage.alt = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
                 lastCardImage.src = cardImageUrl
