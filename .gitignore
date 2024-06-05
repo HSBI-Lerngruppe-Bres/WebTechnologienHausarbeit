@@ -165,3 +165,7 @@ poetry.lock
 
 # Flask
 instance
+
+.gcloudignore
+cloud-sql-proxy
+requirements.txt

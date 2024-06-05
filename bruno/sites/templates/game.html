@@ -1,10 +1,10 @@
 {% extends "game_script.html" %}
 
 {% block content %}
+    <link rel="stylesheet" href="{{url_for("static", filename = "css/game.css")}}">
     <h1>This is a test</h1>
     <button onclick="makeMove('draw')" id="makeMoveButton" class="btn btn-secondary">Draw</button>
     <div id="cards" class="mt-3"></div>
-    <div id="card-counts" class="mt-3"></div>
     <div id="last-card"class="mt-3"></div>
     <div id="colorSelector" style="display: none;">
         <button class="colorButton red" data-color="red" class="btn btn-secondary">Red</button>
@@ -14,237 +14,53 @@
     </div>
     <button onclick="sayUno()" id="makeMoveButton" class="btn btn-secondary">UNO</button>
 
-
-    <!DOCTYPE html>
-    <html lang="de">
     
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>UNO Game</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                background-color: #f0f0f0;
-                margin: 0;
-                padding: 20px;
-            }
-    
-            header {
-                margin-bottom: 20px;
-            }
-    
-            main {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-    
-            .game-area {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-            }
-    
-            .player-area {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-    
-            .player-top {
-                margin-bottom: 10vh;
-            }
-    
-            .player-bottom {
-                margin-bottom: 10vh;
-            }
-    
-            .center-area {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 40px;
-                flex-direction: row;
-                /* Änderung: flex-direction auf row setzen */
-            }
-    
-            .Ablagestapel,
-            .draw-pile {
-                margin: 0 10px;
-                /* Kleinerer Abstand für die Piles */
-                text-align: center;
-                max-width: 40%;
-                /* Maximale Breite auf 40% der Bildschirmbreite setzen */
-            }
-    
-            .pile-title {
-                margin-top: 0;
-                /* Kein oberer Abstand für die Titel */
-                margin-bottom: 10px;
-                /* Unterer Abstand für die Titel */
-            }
-    
-            .cards {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-    
-            .cards img,
-            .card.back {
-                margin: 1px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
-                transition: transform 0.3s, box-shadow 0.3s;
-                max-width: 100px;
-                /* Reduzierte maximale Breite für die Karten */
-                height: auto;
-            }
-    
-            .card.back {
-                background-color: gray;
-            }
-    
-            /* Spezifische Größe für Player 1 Karten */
-            #player-1-cards img {
-                width: 140%;
-                height: 210%;
-            }
-    
-            /* Standardgröße für Player 2 Karten */
-            #player-2-cards img {
-                width: 100%;
-                max-width: 190px;
-                /* Maximal 190px Breite */
-                height: auto;
-            }
-    
-            #player-1-cards img:hover {
-                transform: translateY(-10px) scale(1.1);
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-            }
-    
-            .cards button {
-                background: none;
-                border: none;
-                padding: 0;
-                cursor: pointer;
-                margin: -30px;
-            }
-    
-            /* Standardgröße für Player 2 Karten */
-            #player-2-cards img {
-                width: 100%;
-                max-width: 190px;
-                /* Maximal 190px Breite */
-                height: auto;
-            }
-    
-            /* Spezifische Größe für Player 1 Karten */
-            #player-1-cards img {
-                width: 100%;
-                /* Vollständige Breite des übergeordneten Containers */
-                max-width: 210px;
-                /* Maximal 210px Breite */
-                height: auto;
-            }
-    
-            /* Styling for h4 */
-            h4 {
-                font-size: 1.6em;
-                color: #333;
-                padding: 10px 20px;
-                margin: 10px 0;
-            }
-    
-            @media screen and (max-width: 768px) {
-                .player-area {
-                    margin-bottom: 10px;
-                    /* Reduziere den Abstand zwischen den Spielerbereichen */
-                }
-    
-                .player-bottom {
-                    margin-bottom: 5vh;
-                    /* Reduziere den Abstand für kleine Bildschirme */
-                }
-    
-                #player-1-cards img,
-                #player-2-cards img {
-                    max-width: 30%;
-                    /* Maximale Breite auf 30% der Bildschirmbreite setzen */
-                    height: auto;
-                }
-    
-                .Ablagestapel,
-                .draw-pile {
-                    max-width: 30%;
-                    /* Maximale Breite auf 30% der Bildschirmbreite setzen */
-                }
-    
-            }
-        </style>
-    </head>
-    
-    <body>
-    
-        <main>
-            <div class="game-area">
-                <div class="player-area player-top">
-                    <h2>Player 2</h2>
-                    <div class="cards" id="player-2-cards">
-                        <img class="card back" src="output_cards/uno_card_back.jpg" alt="Kartenrückseite">
-                        <h4>Remaining cards: 7</h4>
-                    </div>
-                </div>
-    
-                <div class="center-area">
-                    <div class="Ablagestapel" id="discard-pile">
+    <div class="game-area">
+        <div class="row justify-content-center pt-3 g-3" id="card-counts">
+        </div>
+        <div class="row justify-content-center pt-3 g-3">
+            <div class="col-4" id="discard-pile">
+                <div class="card">
+                    <div class="card-body">
                         <h3>Ablagestapel</h3>
                         <div class="cards" id="discard-cards">
                             <img class="card yellow" src="output_cards/yellow_2.jpg" alt="yellow 2">
                         </div>
                     </div>
+                </div>
+            </div>
                     
-                    <div class="draw-pile">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
                         <h3>Draw Pile</h3>
-                        <button onclick="makeMove('draw')" id="makeMoveButton" class="btn">
-                            <div class="cards" id="discard-cards">
-                                <img class="card back" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="Kartenrückseite">
-                            </div>
+                        <button onclick="makeMove('draw')" id="makeMoveButton" class="btn btn-link">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="Kartenrückseite">
                         </button>
                     </div>
                 </div>
-    
-                <div class="player-area player-bottom">
-                    <h2>Your Cards</h2>
-                    <p> </p>
-                    <div class="cards" id="player-1-cards">
-                        <button><img class="card red" src="output_cards/red_5.jpg" alt="red 5"></button>
-                        <button><img class="card yellow" src="output_cards/yellow_7.jpg" alt="yellow 7"></button>
-                        <button><img class="card green" src="output_cards/green_2.jpg" alt="green 2"></button>
-                        <button><img class="card yellow" src="output_cards/vierziehen.jpg" alt="yellow 3"></button>
-                        <button><img class="card blue" src="output_cards/blue_9.jpg" alt="blue 9"></button>
-                        <button><img class="card yellow" src="output_cards/vierziehen2.jpg" alt="yellow 3"></button>
-                        <button><img class="card wild" src="output_cards/yellow_reverse.jpg" alt="WILD"></button>
-                        <button><img class="card red" src="output_cards/red_1.jpg" alt="red 1"></button>
-                        <button><img class="card yellow" src="output_cards/yellow_3.jpg" alt="yellow 3"></button>
-                        <button><img class="card yellow" src="output_cards/wild.jpg" alt="yellow 3"></button>
-                        <button><img class="card yellow" src="output_cards/vierziehen.jpg" alt="yellow 3"></button>
-                        <button><img class="card yellow" src="output_cards/vierziehen2.jpg" alt="yellow 3"></button>
-                    </div>
-                </div>
             </div>
-        </main>
-    </body>
-    
-    </html>
+        </div>
+
+        <div class="player-area player-bottom">
+            <h2>Your Cards</h2>
+            <p> </p>
+            <div class="cards" id="player-1-cards">
+                <button><img class="card red" src="output_cards/red_5.jpg" alt="red 5"></button>
+                <button><img class="card yellow" src="output_cards/yellow_7.jpg" alt="yellow 7"></button>
+                <button><img class="card green" src="output_cards/green_2.jpg" alt="green 2"></button>
+                <button><img class="card yellow" src="output_cards/vierziehen.jpg" alt="yellow 3"></button>
+                <button><img class="card blue" src="output_cards/blue_9.jpg" alt="blue 9"></button>
+                <button><img class="card yellow" src="output_cards/vierziehen2.jpg" alt="yellow 3"></button>
+                <button><img class="card wild" src="output_cards/yellow_reverse.jpg" alt="WILD"></button>
+                <button><img class="card red" src="output_cards/red_1.jpg" alt="red 1"></button>
+                <button><img class="card yellow" src="output_cards/yellow_3.jpg" alt="yellow 3"></button>
+                <button><img class="card yellow" src="output_cards/wild.jpg" alt="yellow 3"></button>
+                <button><img class="card yellow" src="output_cards/vierziehen.jpg" alt="yellow 3"></button>
+                <button><img class="card yellow" src="output_cards/vierziehen2.jpg" alt="yellow 3"></button>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 
 

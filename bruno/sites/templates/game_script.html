@@ -91,15 +91,23 @@
 
             for (var player in data.cards) {
                 var cardCountItem = document.createElement('div');
-                cardCountItem.className = 'card-count-item';
+                cardCountItem.className = 'col-4';
+
                 var cardCount = data.cards[player].card_count;
                 var isCurrentTurn = data.cards[player].is_current_turn;
 
-                cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
-                if (isCurrentTurn) {
-                    cardCountItem.innerHTML += ' (Current Turn)';
-                    cardCountItem.style.fontWeight = 'bold';
-                }
+                // Creating the card element
+                cardCountItem.innerHTML = `
+                <div class="card ${isCurrentTurn ? 'glow' : ''}">
+                    <div class="card-body">
+                        <h3>${player}</h3>
+                        <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="Kartenrückseite">
+                        <h3 class="text-center pt-3">
+                            <i class="bi bi-collection"></i> x ${cardCount}
+                        </h3>
+                    </div>
+                </div>
+            `;
 
                 cardCountsList.appendChild(cardCountItem);
             }
