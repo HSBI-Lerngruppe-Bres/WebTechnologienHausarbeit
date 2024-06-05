@@ -83,6 +83,8 @@
 
     //in_game
 
+    const staticBaseUrl = "{{ url_for('static', filename='images/cards/') }}";
+
     socket.on('update_cards', function(data) {
         if (in_game) {
             console.log('Cards data:', data.cards);
@@ -113,13 +115,12 @@
             }
 
             if (data.last_card) {
-                var lastCardDiv = document.getElementById('last-card');
+                var lastCardImage = document.getElementById('last_card_image');
                 var lastCard = data.last_card;
-                if (lastCard.color === 'wild') {
-                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
-                } else {
-                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
-                }
+                var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
+                var cardImageUrl = staticBaseUrl + cardFilename;
+                lastCardImage.alt = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
+                lastCardImage.src = cardImageUrl
             }
 
             if (data.pull_cards) {
@@ -155,20 +156,23 @@
             cardsList.innerHTML = '';
             data.cards.forEach(function(card) {
                 var cardItem = document.createElement('div');
-                cardItem.className = 'card-item';
-                cardItem.innerHTML = `ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}`;
-                var playButton = document.createElement('button');
-                playButton.innerHTML = 'Play';
-                playButton.className = 'play-button btn btn-secondary';
-
-                playButton.addEventListener('click', function() {
+                cardItem.className = 'col-4';
+                var cardFilename = `${card.color}_${card.value}_${card.type}.jpg`;
+                var cardImageUrl = staticBaseUrl + cardFilename;
+                cardItem.innerHTML = `
+                    <button class="btn btn-link">
+                        <img class="w-100" src="${cardImageUrl}" alt="ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}, Selected_Color: ${card.selected_color}">
+                    </button>
+                `;
+                cardItem.querySelector('.btn').addEventListener('click', function() {
                     playCard(card.id, card.color);
                 });
-                cardItem.appendChild(playButton);
                 cardsList.appendChild(cardItem);
             });
         }
     });
+
+
 
     socket.on('uno', (data) => {
         const player_name = data.player_name;
