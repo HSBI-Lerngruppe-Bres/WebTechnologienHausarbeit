@@ -14,23 +14,23 @@
         <div class="row justify-content-center pt-3 g-3" id="card-counts">
         </div>
         <div class="row justify-content-center pt-3 g-3">
-            <div class="col-4" id="discard-pile">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
                 <div class="card">
                     <div class="card-body">
                         <h3>Discard Pile</h3>
                         <div class="cards" id="discard-cards">
-                            <img class="w-100" src="output_cards/yellow_2.jpg" alt="yellow 2" id="last_card_image">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="" id="last_card_image">
                         </div>
                     </div>
                 </div>
             </div>
                     
-            <div class="col-4">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
                 <div class="card">
                     <div class="card-body">
                         <h3>Draw Pile</h3>
-                        <button onclick="makeMove('draw')" id="makeMoveButton" class="btn btn-link">
-                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="Kartenrückseite">
+                        <button onclick="makeMove('draw')" id="makeMoveButton" class="unstyled-button">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="card_back">
                         </button>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
         </div>
         <button onclick="sayUno()" id="makeMoveButton" class="btn btn-secondary">UNO</button>
 
-        <div id="cards" class="row justify-content-center pt-3"></div>
+        <div id="cards" class="row justify-content-center"></div>
 {% endblock content %}
 
 
