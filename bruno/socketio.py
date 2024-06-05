@@ -167,7 +167,6 @@ class GameNamespace(Namespace):
         action = data.get('action')
         card_id = data.get('card_id')
         selected_color = data.get('selected_color')
-        print(1, player_already_drawn(current_user))
 
         if not is_player_turn(game_id, current_user):
             return
@@ -183,12 +182,8 @@ class GameNamespace(Namespace):
         elif action == 'card':
             return
         elif action == 'draw' and not player_already_drawn(current_user):
-            print(2.5, player_already_drawn(current_user))
-            print(2.7, handle_draw_action(current_user, game_id))
-            print(2.8, player_already_drawn(current_user))
             emit("update_own_cards", {"cards": cards_data}, namespace='/game')
             self.send_update_cards(game_id, hashed_game_id, True)
-            print(2, player_already_drawn(current_user))
             return
         elif action == 'draw' and player_already_drawn(current_user):
             pass
@@ -196,7 +191,6 @@ class GameNamespace(Namespace):
             end_game(game_id)
             self.send_end_game(hashed_game_id)
             return
-        print(3, player_already_drawn(current_user))
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
