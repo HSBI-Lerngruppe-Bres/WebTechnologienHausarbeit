@@ -6,3 +6,13 @@
   transform: translateY(-10px) scale(1.1);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
+
+.unstyled-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
