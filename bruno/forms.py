@@ -15,8 +15,7 @@ class CreateGameForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(CreateGameForm, self).__init__(*args, **kwargs)
         if not self.game_name.data:
-            self.game_name.data = f"{kwargs.get(
-                'name', '')}'s Game"
+            self.game_name.data = f"{kwargs.get('name', '')}'s Game"
 
 
 class JoinGameForm(FlaskForm):
