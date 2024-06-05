@@ -2,13 +2,6 @@
 
 {% block content %}
     <link rel="stylesheet" href="{{url_for("static", filename = "css/game.css")}}">
-
-    <div id="colorSelector" style="display: none;">
-        <button class="colorButton red" data-color="red" class="btn btn-secondary">Red</button>
-        <button class="colorButton yellow" data-color="yellow" class="btn btn-secondary">Yellow</button>
-        <button class="colorButton green" data-color="green" class="btn btn-secondary">Green</button>
-        <button class="colorButton blue" data-color="blue" class="btn btn-secondary">Blue</button>
-    </div>
     
     <div class="game-area">
         <div class="row justify-content-center pt-3 g-3" id="card-counts">
@@ -36,14 +29,34 @@
                 </div>
             </div>
         </div>
-
-        <div id="colorSelector" style="display: none;">
-            <button class="colorButton red" data-color="red" class="btn btn-secondary">Red</button>
-            <button class="colorButton yellow" data-color="yellow" class="btn btn-secondary">Yellow</button>
-            <button class="colorButton green" data-color="green" class="btn btn-secondary">Green</button>
-            <button class="colorButton blue" data-color="blue" class="btn btn-secondary">Blue</button>
+        <div class="row justify-content-center pt-3 g-3">
+            <div class="col-4">
+                <div id="colorSelector" style="display: none;" class="card">
+                    <button class="colorButton red unstyled-button floating-button" data-color="red">         
+                        <img class="w-100"  src="{{url_for("static", filename = "images/cards/red_no_number.jpg")}}" alt="card_back">
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button class="colorButton yellow unstyled-button floating-button" data-color="yellow">
+                        <img class="w-100" src="{{url_for("static", filename = "images/cards/yellow_no_number.jpg")}}" alt="card_back">
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button class="colorButton green unstyled-button floating-button" data-color="green">
+                        <img class="w-100" src="{{url_for("static", filename = "images/cards/green_no_number.jpg")}}" alt="card_back">
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button class="colorButton blue unstyled-button floating-button" data-color="blue">
+                        <img class="w-100" src="{{url_for("static", filename = "images/cards/blue_no_number.jpg")}}" alt="card_back">
+                    </button>
+                </div>
+            </div>
         </div>
-        <button onclick="sayUno()" id="makeMoveButton" class="btn btn-secondary">UNO</button>
+
+        <button onclick="sayUno()" id="makeMoveButton" class="unstyled-button uno-button floating-button">
+            <img class="w-100" src="{{url_for("static", filename = "images/logo.png")}}" alt="card_back">
+        </button>
 
         <div id="cards" class="row justify-content-center"></div>
 {% endblock content %}
