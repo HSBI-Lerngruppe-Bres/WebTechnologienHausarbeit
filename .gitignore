@@ -162,10 +162,14 @@ cython_debug/
 
 # Poetry
 poetry.lock
+requirements.txt
 
 # Flask
 instance
 
+requirements.txt
+
+#gcloud
 .gcloudignore
 cloud-sql-proxy
-requirements.txt
+
