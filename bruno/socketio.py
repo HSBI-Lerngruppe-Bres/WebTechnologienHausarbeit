@@ -182,10 +182,13 @@ class GameNamespace(Namespace):
         elif action == 'card':
             return
         elif action == 'draw' and not player_already_drawn(current_user):
+            handle_draw_action(current_user, game_id)
             emit("update_own_cards", {"cards": cards_data}, namespace='/game')
             self.send_update_cards(game_id, hashed_game_id, True)
+            print("1", data)
             return
         elif action == 'draw' and player_already_drawn(current_user):
+            print("2", data)
             pass
         if not advance_turn(game_id)[0]:
             end_game(game_id)
