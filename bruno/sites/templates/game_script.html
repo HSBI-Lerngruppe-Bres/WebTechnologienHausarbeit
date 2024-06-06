@@ -83,6 +83,8 @@
 
     //in_game
 
+    const staticBaseUrl = "{{ url_for('static', filename='images/cards/') }}";
+
     socket.on('update_cards', function(data) {
         if (in_game) {
             console.log('Cards data:', data.cards);
@@ -91,27 +93,38 @@
 
             for (var player in data.cards) {
                 var cardCountItem = document.createElement('div');
-                cardCountItem.className = 'card-count-item';
+                cardCountItem.className = 'col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2';
+
                 var cardCount = data.cards[player].card_count;
                 var isCurrentTurn = data.cards[player].is_current_turn;
 
-                cardCountItem.innerHTML = `Player: ${player}, Cards: ${cardCount}`;
-                if (isCurrentTurn) {
-                    cardCountItem.innerHTML += ' (Current Turn)';
-                    cardCountItem.style.fontWeight = 'bold';
-                }
+                // Creating the card element
+                cardCountItem.innerHTML = `
+                <div class="card ${isCurrentTurn ? 'glow' : ''}">
+                    <div class="card-body">
+                        <h3>${player}</h3>
+                        <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="Kartenrückseite">
+                        <h3 class="text-center pt-3">
+                            <i class="bi bi-collection"></i> x ${cardCount}
+                        </h3>
+                    </div>
+                </div>
+            `;
 
                 cardCountsList.appendChild(cardCountItem);
             }
 
             if (data.last_card) {
-                var lastCardDiv = document.getElementById('last-card');
+                var lastCardImage = document.getElementById('last_card_image');
                 var lastCard = data.last_card;
-                if (lastCard.color === 'wild') {
-                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
+                if (lastCard.selected_color) {
+                    var cardFilename = `${lastCard.selected_color}_no_number.jpg`;
                 } else {
-                    lastCardDiv.innerHTML = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}`;
+                    var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
                 }
+                var cardImageUrl = staticBaseUrl + cardFilename;
+                lastCardImage.alt = `ID: ${lastCard.id}, Color: ${lastCard.color}, Value: ${lastCard.value}, Type: ${lastCard.type}, Selected_Color: ${lastCard.selected_color}`;
+                lastCardImage.src = cardImageUrl
             }
 
             if (data.pull_cards) {
@@ -147,20 +160,23 @@
             cardsList.innerHTML = '';
             data.cards.forEach(function(card) {
                 var cardItem = document.createElement('div');
-                cardItem.className = 'card-item';
-                cardItem.innerHTML = `ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}`;
-                var playButton = document.createElement('button');
-                playButton.innerHTML = 'Play';
-                playButton.className = 'play-button btn btn-secondary';
-
-                playButton.addEventListener('click', function() {
+                cardItem.className = 'col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1';
+                var cardFilename = `${card.color}_${card.value}_${card.type}.jpg`;
+                var cardImageUrl = staticBaseUrl + cardFilename;
+                cardItem.innerHTML = `
+                    <button class="unstyled-button own-card">
+                        <img class="w-100" src="${cardImageUrl}" alt="ID: ${card.id}, Color: ${card.color}, Value: ${card.value}, Type: ${card.type}, Selected_Color: ${card.selected_color}">
+                    </button>
+                `;
+                cardItem.querySelector('.own-card').addEventListener('click', function() {
                     playCard(card.id, card.color);
                 });
-                cardItem.appendChild(playButton);
                 cardsList.appendChild(cardItem);
             });
         }
     });
+
+
 
     socket.on('uno', (data) => {
         const player_name = data.player_name;

@@ -1,16 +1,74 @@
 {% extends "game_script.html" %}
 
 {% block content %}
-    <h1>This is a test</h1>
-    <button onclick="makeMove('draw')" id="makeMoveButton" class="btn btn-secondary">Draw</button>
-    <div id="cards" class="mt-3"></div>
-    <div id="card-counts" class="mt-3"></div>
-    <div id="last-card"class="mt-3"></div>
-    <div id="colorSelector" style="display: none;">
-        <button class="colorButton red" data-color="red" class="btn btn-secondary">Red</button>
-        <button class="colorButton yellow" data-color="yellow" class="btn btn-secondary">Yellow</button>
-        <button class="colorButton green" data-color="green" class="btn btn-secondary">Green</button>
-        <button class="colorButton blue" data-color="blue" class="btn btn-secondary">Blue</button>
-    </div>
-    <button onclick="sayUno()" id="makeMoveButton" class="btn btn-secondary">UNO</button>
+    <link rel="stylesheet" href="{{url_for("static", filename = "css/game.css")}}">
+    
+    <div class="game-area">
+        <div class="row justify-content-center pt-3 g-3" id="card-counts">
+        </div>
+        <div class="row justify-content-center pt-3 g-3">
+            <div class="col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Discard Pile</h3>
+                        <div class="cards" id="discard-cards">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="" id="last_card_image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+            <div class="col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Draw Pile</h3>
+                        <button onclick="makeMove('draw')" id="makeMoveButton" class="unstyled-button">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="card_back">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="color-selector h-75" id="colorSelector" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Select the wild card color</h3>
+                    <table class="w-100">
+                        <tr>
+                            <td  class="w-50">
+                                <button class="colorButton red unstyled-button floating-button" data-color="red">         
+                                    <img class="w-100" src="{{url_for('static', filename='images/cards/red_no_number.jpg')}}" alt="card_back">
+                                </button>
+                            </td>
+                            <td class="w-50">
+                                <button class="colorButton yellow unstyled-button floating-button" data-color="yellow">
+                                    <img class="w-100" src="{{url_for('static', filename='images/cards/yellow_no_number.jpg')}}" alt="card_back">
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="w-50">
+                                <button class="colorButton green unstyled-button floating-button" data-color="green">
+                                    <img class="w-100" src="{{url_for('static', filename='images/cards/green_no_number.jpg')}}" alt="card_back">
+                                </button>
+                            </td>
+                            <td class="w-50">
+                                <button class="colorButton blue unstyled-button floating-button" data-color="blue">
+                                    <img class="w-100" src="{{url_for('static', filename='images/cards/blue_no_number.jpg')}}" alt="card_back">
+                                </button>
+                            </td>  
+                        </tr>
+                    </table>      
+                </div>
+            </div>
+        </div>
+
+
+        <button onclick="sayUno()" id="makeMoveButton" class="unstyled-button uno-button floating-button">
+            <img class="w-100" src="{{url_for("static", filename = "images/logo.png")}}" alt="card_back">
+        </button>
+
+        <div id="cards" class="row justify-content-center"></div>
 {% endblock content %}
+
+
