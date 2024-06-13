@@ -90,9 +90,17 @@
             console.log('Cards data:', data.cards);
             var cardCountsList = document.getElementById('card-counts');
             cardCountsList.innerHTML = '';
+            var lastCardCard = document.getElementById('last_card_card')
+            var drawStackCard = document.getElementById('draw_stack_card')
+            lastCardCard.className = "card"
+            drawStackCard.className = "card"
 
             for (var player in data.cards) {
                 if (player == {{ player_id }}){
+                    if (data.cards[player].is_current_turn){
+                        lastCardCard.className = "card glow"
+                        drawStackCard.className = "card glow"
+                    }
                     continue;
                 }
                 var cardCountItem = document.createElement('div');
