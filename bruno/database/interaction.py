@@ -1092,16 +1092,24 @@ def player_already_drawn(player: Player) -> bool:
     return player.has_drawn
 
 
-def make_player_game_owner(player: Player) -> bool:
-    """Makes the player a game owner
+def make_player_game_owner(player: Player, game_id: int) -> bool:
+    """Makes the player a game owner if the game needs a new owner
 
     Args:
-        player (Player): The soon to be owner
+        player (Player): The soon-to-be owner
+        game_id (int): The ID of the game
 
     Returns:
-        bool: If successfull
+        bool: If successful
     """
     try:
+        players = get_players_by_game_id(game_id)
+        current_owner = next((p for p in players if p.is_game_owner), None)
+
+        if current_owner:
+            print("Game already has an owner.")
+            return False
+
         player.is_game_owner = True
         db.session.commit()
         return True

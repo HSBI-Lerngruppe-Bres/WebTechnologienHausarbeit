@@ -121,10 +121,10 @@ class GameNamespace(Namespace):
             if len(get_players_by_game_id(game_id)) <= 1:
                 end_game(game_id)
                 self.send_end_game(hashed_game_id)
-            make_player_game_owner(get_players_by_game_id(game_id)[0])
+            make_player_game_owner(get_players_by_game_id(game_id)[0], game_id)
         logout_user()
 
-    @authenticated_only
+    @ authenticated_only
     def on_update_settings(self, data):
         """Handles the settings update event
         """
@@ -135,7 +135,7 @@ class GameNamespace(Namespace):
             update_settings(game_id, data.get("settings"))
         self.send_update_settings(game_id, hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_start_game(self, data):
         """When a player starts the game
         """
@@ -156,7 +156,7 @@ class GameNamespace(Namespace):
         randomize_order(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_move(self, data):
         """When a users plays a move
         """
@@ -197,7 +197,7 @@ class GameNamespace(Namespace):
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
-    @authenticated_only
+    @ authenticated_only
     def on_request_cards(self, data):
         """When the client requests to receive its cards
         """
@@ -208,7 +208,7 @@ class GameNamespace(Namespace):
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_uno(self, data):
         hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
