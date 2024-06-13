@@ -1090,3 +1090,23 @@ def player_already_drawn(player: Player) -> bool:
         bool: True if the player has already drawn a card, False otherwise.
     """
     return player.has_drawn
+
+
+def make_player_game_owner(player: Player) -> bool:
+    """Makes the player a game owner
+
+    Args:
+        player (Player): The soon to be owner
+
+    Returns:
+        bool: If successfull
+    """
+    try:
+        player.is_game_owner = True
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False
