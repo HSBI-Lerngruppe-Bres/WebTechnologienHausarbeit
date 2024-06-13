@@ -633,7 +633,8 @@ def card_amounts_turn_in_game(game_id: int) -> dict:
     card_amounts = {}
     for player in players:
         total_cards = sum(player_card.amount for player_card in player.cards)
-        card_amounts[player.name] = {
+        card_amounts[player.id] = {
+            'player_name': player.name,
             'card_count': total_cards,
             'is_current_turn': player.is_current_turn
         }
@@ -1089,3 +1090,31 @@ def player_already_drawn(player: Player) -> bool:
         bool: True if the player has already drawn a card, False otherwise.
     """
     return player.has_drawn
+
+
+def make_player_game_owner(player: Player, game_id: int) -> bool:
+    """Makes the player a game owner if the game needs a new owner
+
+    Args:
+        player (Player): The soon-to-be owner
+        game_id (int): The ID of the game
+
+    Returns:
+        bool: If successful
+    """
+    try:
+        players = get_players_by_game_id(game_id)
+        current_owner = next((p for p in players if p.is_game_owner), None)
+
+        if current_owner:
+            print("Game already has an owner.")
+            return False
+
+        player.is_game_owner = True
+        db.session.commit()
+        return True
+    except Exception as e:
+        # Log the exception if needed
+        print(f"An error occurred: {e}")
+        db.session.rollback()
+        return False

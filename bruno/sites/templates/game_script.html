@@ -90,19 +90,31 @@
             console.log('Cards data:', data.cards);
             var cardCountsList = document.getElementById('card-counts');
             cardCountsList.innerHTML = '';
+            var lastCardCard = document.getElementById('last_card_card')
+            var drawStackCard = document.getElementById('draw_stack_card')
+            lastCardCard.className = "card"
+            drawStackCard.className = "card"
 
             for (var player in data.cards) {
+                if (player == {{ player_id }}){
+                    if (data.cards[player].is_current_turn){
+                        lastCardCard.className = "card glow"
+                        drawStackCard.className = "card glow"
+                    }
+                    continue;
+                }
                 var cardCountItem = document.createElement('div');
                 cardCountItem.className = 'col-6 col-sm-4 col-md-3 col-lg-3 col-xl-2';
 
                 var cardCount = data.cards[player].card_count;
                 var isCurrentTurn = data.cards[player].is_current_turn;
+                var playerName = data.cards[player].player_name;
 
                 // Creating the card element
                 cardCountItem.innerHTML = `
                 <div class="card ${isCurrentTurn ? 'glow' : ''}">
                     <div class="card-body">
-                        <h3>${player}</h3>
+                        <h3>${playerName}</h3>
                         <h3 class="text-center pt-3">
                             <i class="bi bi-collection"></i> x ${cardCount}
                         </h3>
@@ -117,7 +129,7 @@
                 var lastCardImage = document.getElementById('last_card_image');
                 var lastCard = data.last_card;
                 if (lastCard.selected_color) {
-                    var cardFilename = `${lastCard.selected_color}_no_number.jpg`;
+                    var cardFilename = `${lastCard.selected_color}_${lastCard.value}_${lastCard.type}.jpg`;
                 } else {
                     var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
                 }

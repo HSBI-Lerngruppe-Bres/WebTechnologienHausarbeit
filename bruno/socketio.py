@@ -3,7 +3,7 @@ from flask_login import current_user, logout_user
 from functools import wraps
 from flask import current_app
 from hashids import Hashids
-from bruno.database.interaction import player_already_drawn, handle_draw_action, end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
+from bruno.database.interaction import make_player_game_owner, player_already_drawn, handle_draw_action, end_game, lower_uno_score, set_uno, player_won, check_for_win, remove_finished_status, randomize_order, handle_card_action, advance_turn, is_player_turn, set_new_last_card, get_last_card_by_game, check_card_playable, remove_card_from_player, remove_all_cards, get_cards_by_player, card_amounts_turn_in_game, draw_cards, select_start_card, get_players_by_game_id, check_owner, remove_player, player_join_game, get_game_id_by_player_id, update_settings, get_settings_by_game_id, check_game_join, start_game
 
 
 def authenticated_only(f):
@@ -112,7 +112,6 @@ class GameNamespace(Namespace):
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
         hashed_game_id = hashids.encode(game_id)
         print(current_user, "DISCONNECTED")
-        # TODO find a new owner if owner leaves
         if game_id:
             if is_player_turn(game_id, current_user):
                 advance_turn(game_id)
@@ -122,9 +121,10 @@ class GameNamespace(Namespace):
             if len(get_players_by_game_id(game_id)) <= 1:
                 end_game(game_id)
                 self.send_end_game(hashed_game_id)
+            make_player_game_owner(get_players_by_game_id(game_id)[0], game_id)
         logout_user()
 
-    @authenticated_only
+    @ authenticated_only
     def on_update_settings(self, data):
         """Handles the settings update event
         """
@@ -135,7 +135,7 @@ class GameNamespace(Namespace):
             update_settings(game_id, data.get("settings"))
         self.send_update_settings(game_id, hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_start_game(self, data):
         """When a player starts the game
         """
@@ -156,7 +156,7 @@ class GameNamespace(Namespace):
         randomize_order(game_id)
         emit("start_game", {"start": True}, room=hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_move(self, data):
         """When a users plays a move
         """
@@ -197,7 +197,7 @@ class GameNamespace(Namespace):
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id, True)
 
-    @authenticated_only
+    @ authenticated_only
     def on_request_cards(self, data):
         """When the client requests to receive its cards
         """
@@ -208,7 +208,7 @@ class GameNamespace(Namespace):
         emit("update_own_cards", {"cards": cards_data}, namespace='/game')
         self.send_update_cards(game_id, hashed_game_id)
 
-    @authenticated_only
+    @ authenticated_only
     def on_uno(self, data):
         hashed_game_id = data.get('hashed_game_id')
         hashids = Hashids(salt=current_app.config['SECRET_KEY'], min_length=5)
