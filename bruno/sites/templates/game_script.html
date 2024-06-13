@@ -129,7 +129,7 @@
                 var lastCardImage = document.getElementById('last_card_image');
                 var lastCard = data.last_card;
                 if (lastCard.selected_color) {
-                    var cardFilename = `${lastCard.selected_color}_no_number.jpg`;
+                    var cardFilename = `${lastCard.selected_color}_${lastCard.value}_${lastCard.type}.jpg`;
                 } else {
                     var cardFilename = `${lastCard.color}_${lastCard.value}_${lastCard.type}.jpg`;
                 }
