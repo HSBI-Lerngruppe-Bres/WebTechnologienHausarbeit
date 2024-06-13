@@ -633,7 +633,8 @@ def card_amounts_turn_in_game(game_id: int) -> dict:
     card_amounts = {}
     for player in players:
         total_cards = sum(player_card.amount for player_card in player.cards)
-        card_amounts[player.name] = {
+        card_amounts[player.id] = {
+            'player_name': player.name,
             'card_count': total_cards,
             'is_current_turn': player.is_current_turn
         }
