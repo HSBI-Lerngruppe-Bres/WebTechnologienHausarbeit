@@ -171,7 +171,7 @@
             cardsList.innerHTML = '';
             data.cards.forEach(function(card) {
                 var cardItem = document.createElement('div');
-                cardItem.className = 'col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1';
+                cardItem.className = 'col-4 col-sm-4 col-md-3 col-lg-2 col-xl-1';
                 var cardFilename = `${card.color}_${card.value}_${card.type}.jpg`;
                 var cardImageUrl = staticBaseUrl + cardFilename;
                 cardItem.innerHTML = `
