@@ -114,7 +114,11 @@
                 cardCountItem.innerHTML = `
                 <div class="card ${isCurrentTurn ? 'glow' : ''}">
                     <div class="card-body">
-                        <h3>${playerName} <i class="bi bi-collection"></i> x ${cardCount}</h3>
+                        <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>${playerName}</span>
+                            <span style="flex-grow: 1;"></span>
+                            <span><i class="bi bi-collection"></i> x ${cardCount}</span>
+                        </h3>                    
                     </div>
                 </div>
             `;

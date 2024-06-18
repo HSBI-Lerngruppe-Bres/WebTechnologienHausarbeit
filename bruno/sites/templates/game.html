@@ -9,19 +9,19 @@
         </div>
         <div class="row justify-content-center pt-3 g-3">
             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
-                <div class="card", id="last_card_card">
+                <div class="card  w-75", id="last_card_card">
                     <div class="card-body">
                         <div class="cards" id="discard-cards">
-                            <img class="w-75" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="" id="last_card_image">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="" id="last_card_image">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
-                <div class="card", id="draw_stack_card">
+                <div class="card  w-75", id="draw_stack_card">
                     <div class="card-body">
-                        <button onclick="makeMove('draw')" id="makeMoveButton" class="unstyled-button">
-                            <img class="w-75" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="card_back">
+                        <button onclick="makeMove('draw')" id="makeMoveButton" class="unstyled-button cards">
+                            <img class="w-100" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="card_back">
                         </button>
                     </div>
                 </div>
