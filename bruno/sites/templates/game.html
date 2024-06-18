@@ -11,7 +11,6 @@
             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
                 <div class="card", id="last_card_card">
                     <div class="card-body">
-                        <h3>Discard Pile</h3>
                         <div class="cards" id="discard-cards">
                             <img class="w-75" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="" id="last_card_image">
                         </div>
@@ -21,7 +20,6 @@
             <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
                 <div class="card", id="draw_stack_card">
                     <div class="card-body">
-                        <h3>Draw Pile</h3>
                         <button onclick="makeMove('draw')" id="makeMoveButton" class="unstyled-button">
                             <img class="w-75" src="{{url_for("static", filename = "images/cards/uno_card_back.jpg")}}" alt="card_back">
                         </button>
